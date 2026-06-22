@@ -68,12 +68,12 @@ export function HomeScreen() {
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
           letterSpacing: '-0.5px', lineHeight: 1,
         }}>
-          Checkers
+          Emerald Checkers
         </h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', marginTop: 8 }}>
           <div style={{ flex: 1, height: 1, background: 'rgba(94,204,134,0.2)' }} />
           <span style={{ fontSize: 10, letterSpacing: '4px', fontWeight: 700, color: '#3A7A50', textTransform: 'uppercase' }}>
-            EMERALD COURTS
+            BOARD GAME
           </span>
           <div style={{ flex: 1, height: 1, background: 'rgba(94,204,134,0.2)' }} />
         </div>
