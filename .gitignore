@@ -35,7 +35,7 @@ __pycache__/
 # Playwright snapshots
 .playwright-mcp/
 
-# Stray root screenshots
-*.png
-*.jpg
-*.jpeg
+# Stray root screenshots (root only)
+/*.png
+/*.jpg
+/*.jpeg
