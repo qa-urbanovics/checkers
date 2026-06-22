@@ -1,6 +1,8 @@
 import { AIDifficulty, BoardSize, Cell, GameRules, Move, Piece, PlayerColor } from '../models/types';
-import { getAllValidMoves, getValidMovesForPiece, applyMove } from './moveValidator';
+import { getAllValidMoves, getValidMovesForPiece, applyMove, shouldPromote } from './moveValidator';
 import { cloneBoard } from './boardFactory';
+
+interface CapturedPiece { row: number; col: number; id: string; }
 
 // ============================================================
 // AI ENGINE — Minimax with Alpha-Beta Pruning
@@ -59,20 +61,39 @@ interface MoveOutcome {
 }
 
 // Expand a capture chain to completion, returning all possible final boards.
-// This handles multi-jump sequences so the AI evaluates complete moves, not partial ones.
-function expandChain(piece: Piece, board: Cell[][], size: BoardSize, rules: GameRules): Cell[][][] {
-  const chainMoves = getValidMovesForPiece(piece, board, size, true, rules);
-  if (chainMoves.length === 0) return [board];
+// Captured pieces stay on the board during the chain (FMJD rule — they block king paths).
+// They are removed only when the chain ends (no more captures available).
+function expandChain(
+  piece: Piece,
+  board: Cell[][],
+  capturedInChain: CapturedPiece[],
+  size: BoardSize,
+  rules: GameRules
+): Cell[][][] {
+  const capturedIds = new Set(capturedInChain.map(c => c.id));
+  const chainMoves = getValidMovesForPiece(piece, board, size, true, rules, capturedIds);
+
+  if (chainMoves.length === 0) {
+    // Chain complete — produce final board with all captured pieces removed
+    const final = cloneBoard(board);
+    for (const cap of capturedInChain) final[cap.row][cap.col].piece = null;
+    return [final];
+  }
 
   const results: Cell[][][] = [];
   for (const move of chainMoves) {
     const cloned = cloneBoard(board);
-    const p = cloned[move.fromRow][move.fromCol].piece!;
-    applyMove(move, cloned, p, size);
-    const movedPiece = cloned[move.toRow][move.toCol].piece!;
-
-    // On promotion mid-chain, piece continues as king in both rule sets
-    results.push(...expandChain(movedPiece, cloned, size, rules));
+    const cap = move.captures[0];
+    // Move the piece; do NOT remove the captured piece yet
+    cloned[move.fromRow][move.fromCol].piece = null;
+    const isPromoted = shouldPromote(piece, move.toRow, size);
+    const moved: Piece = {
+      ...piece, row: move.toRow, col: move.toCol,
+      type: isPromoted ? 'king' : piece.type,
+    };
+    cloned[move.toRow][move.toCol].piece = moved;
+    const newCaptured = [...capturedInChain, { row: cap.row, col: cap.col, id: cap.pieceId }];
+    results.push(...expandChain(moved, cloned, newCaptured, size, rules));
   }
   return results;
 }
@@ -88,19 +109,27 @@ function getAIMoves(
   const outcomes: MoveOutcome[] = [];
 
   for (const move of singleMoves) {
-    const cloned = cloneBoard(board);
-    const piece = cloned[move.fromRow][move.fromCol].piece!;
-    applyMove(move, cloned, piece, size);
-
     if (move.captures.length === 0) {
+      const cloned = cloneBoard(board);
+      const piece = cloned[move.fromRow][move.fromCol].piece!;
+      applyMove(move, cloned, piece, size);
       outcomes.push({ firstMove: move, finalBoard: cloned });
       continue;
     }
 
-    // Expand chain: the player must complete all captures
-    const movedPiece = cloned[move.toRow][move.toCol].piece!;
-    // On promotion mid-chain, piece continues as king in both rule sets
-    const finalBoards = expandChain(movedPiece, cloned, size, rules);
+    // Capture move: keep captured piece on board during chain expansion (FMJD rule)
+    const cloned = cloneBoard(board);
+    const piece = cloned[move.fromRow][move.fromCol].piece!;
+    const cap = move.captures[0];
+    cloned[move.fromRow][move.fromCol].piece = null;
+    const isPromoted = shouldPromote(piece, move.toRow, size);
+    const movedPiece: Piece = {
+      ...piece, row: move.toRow, col: move.toCol,
+      type: isPromoted ? 'king' : piece.type,
+    };
+    cloned[move.toRow][move.toCol].piece = movedPiece;
+    const capturedInChain: CapturedPiece[] = [{ row: cap.row, col: cap.col, id: cap.pieceId }];
+    const finalBoards = expandChain(movedPiece, cloned, capturedInChain, size, rules);
     for (const fb of finalBoards) {
       outcomes.push({ firstMove: move, finalBoard: fb });
     }

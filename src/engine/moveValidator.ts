@@ -134,8 +134,8 @@ function maxCaptureCount(
 
     const temp = cloneBoard(board);
     temp[move.fromRow][move.fromCol].piece = null;
-    temp[cap.row][cap.col].piece = null;
-    // On promotion mid-chain, piece continues as king in both rule sets
+    // Captured piece stays on board (FMJD rule): it physically blocks king paths
+    // in subsequent jumps. capturedIds prevents re-jumping it.
     const moved: Piece = {
       ...piece, row: move.toRow, col: move.toCol,
       type: isPromoted ? 'king' : piece.type,
@@ -176,8 +176,8 @@ function getCaptureMovesForPiece(
 
     const temp = cloneBoard(board);
     temp[move.fromRow][move.fromCol].piece = null;
-    temp[cap.row][cap.col].piece = null;
-    // On promotion mid-chain, piece continues as king in both rule sets
+    // Captured piece stays on board (FMJD rule): it physically blocks king paths
+    // in subsequent jumps. capturedIds prevents re-jumping it.
     const moved: Piece = {
       ...piece, row: move.toRow, col: move.toCol,
       type: isPromoted ? 'king' : piece.type,
@@ -239,14 +239,15 @@ export function getValidMovesForPiece(
   board: Cell[][],
   size: BoardSize,
   mustCapture: boolean,
-  rules: GameRules
+  rules: GameRules,
+  capturedIds: Set<string> = new Set()
 ): Move[] {
   if (mustCapture) {
-    return getCaptureMovesForPiece(piece, board, size, new Set(), rules);
+    return getCaptureMovesForPiece(piece, board, size, capturedIds, rules);
   }
-  const captures = getSingleCaptures(piece, board, size, new Set());
+  const captures = getSingleCaptures(piece, board, size, capturedIds);
   if (captures.length > 0) {
-    return getCaptureMovesForPiece(piece, board, size, new Set(), rules);
+    return getCaptureMovesForPiece(piece, board, size, capturedIds, rules);
   }
   return getSimpleMoves(piece, board, size);
 }
