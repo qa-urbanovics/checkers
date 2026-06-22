@@ -8,10 +8,12 @@ interface CapturedPiece { row: number; col: number; id: string; }
 // AI ENGINE — Minimax with Alpha-Beta Pruning
 // ============================================================
 
-const DIFFICULTY_DEPTH: Record<AIDifficulty, number> = {
-  easy: 1,
-  medium: 3,
-  hard: 7,
+// Depths per difficulty. Hard is capped lower on 10×10 to avoid UI freeze
+// (more pieces = much higher branching factor early game).
+const DIFFICULTY_DEPTH: Record<AIDifficulty, Record<BoardSize, number>> = {
+  easy:   { 8: 1,  10: 1  },
+  medium: { 8: 3,  10: 3  },
+  hard:   { 8: 7,  10: 5  },
 };
 
 function evaluate(board: Cell[][], size: BoardSize): number {
@@ -144,7 +146,6 @@ function minimax(
   alpha: number,
   beta: number,
   isMaximizing: boolean,
-  aiColor: PlayerColor,
   size: BoardSize,
   rules: GameRules
 ): number {
@@ -160,7 +161,7 @@ function minimax(
   if (isMaximizing) {
     let maxEval = -Infinity;
     for (const outcome of outcomes) {
-      const score = minimax(outcome.finalBoard, depth - 1, alpha, beta, false, aiColor, size, rules);
+      const score = minimax(outcome.finalBoard, depth - 1, alpha, beta, false, size, rules);
       if (score > maxEval) maxEval = score;
       if (maxEval > alpha) alpha = maxEval;
       if (beta <= alpha) break;
@@ -169,7 +170,7 @@ function minimax(
   } else {
     let minEval = Infinity;
     for (const outcome of outcomes) {
-      const score = minimax(outcome.finalBoard, depth - 1, alpha, beta, true, aiColor, size, rules);
+      const score = minimax(outcome.finalBoard, depth - 1, alpha, beta, true, size, rules);
       if (score < minEval) minEval = score;
       if (minEval < beta) beta = minEval;
       if (beta <= alpha) break;
@@ -193,14 +194,14 @@ export function getBestMove(
     return outcomes[Math.floor(Math.random() * outcomes.length)].firstMove;
   }
 
-  const depth = DIFFICULTY_DEPTH[difficulty];
+  const depth = DIFFICULTY_DEPTH[difficulty][size];
   let bestMove: Move | null = null;
   // AI is black → minimizes (evaluate + = good for red = bad for black)
   let bestScore = Infinity;
 
   for (const outcome of outcomes) {
     // After AI (black) moves, red goes next → isMaximizing = true
-    const score = minimax(outcome.finalBoard, depth - 1, -Infinity, Infinity, true, aiColor, size, rules);
+    const score = minimax(outcome.finalBoard, depth - 1, -Infinity, Infinity, true, size, rules);
     if (score < bestScore) {
       bestScore = score;
       bestMove = outcome.firstMove;

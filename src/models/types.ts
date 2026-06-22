@@ -14,7 +14,7 @@ export type AIDifficulty = 'easy' | 'medium' | 'hard';
 
 export type GameRules = 'russian' | 'international';
 
-export type GameStatus = 'idle' | 'playing' | 'paused' | 'finished';
+export type GameStatus = 'playing' | 'finished';
 
 export type Screen = 'home' | 'mode-select' | 'board-select' | 'difficulty-select' | 'game' | 'settings' | 'stats' | 'rules';
 
@@ -34,7 +34,6 @@ export interface Move {
   toRow: number;
   toCol: number;
   captures: Array<{ row: number; col: number; pieceId: string }>;
-  isChain?: boolean; // part of a multi-capture sequence
 }
 
 // Board cell

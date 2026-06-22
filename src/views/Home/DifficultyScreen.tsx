@@ -13,13 +13,16 @@ function DifficultyOrb({ color }: { color: string }) {
 }
 
 export function DifficultyScreen() {
-  const { setScreen, setPendingDifficulty, startGame } = useGameStore();
+  const { setScreen, setPendingDifficulty, startGame, pendingBoardSize } = useGameStore();
   const t = useT();
 
+  // Depth varies by board size: 8×8 goes deeper, 10×10 is capped to stay responsive
+  const hardDepth = pendingBoardSize === 10 ? 5 : 7;
+
   const levels: { value: AIDifficulty; label: string; sub: string; depth: number; color: string }[] = [
-    { value: 'easy',   label: t('easyLabel'),   sub: t('easySub'),   depth: 1, color: '#5ECC86' },
-    { value: 'medium', label: t('mediumLabel'), sub: t('mediumSub'), depth: 3, color: '#C9A84C' },
-    { value: 'hard',   label: t('hardLabel'),   sub: t('hardSub'),   depth: 7, color: '#E05A5A' },
+    { value: 'easy',   label: t('easyLabel'),   sub: t('easySub'),   depth: 1,         color: '#5ECC86' },
+    { value: 'medium', label: t('mediumLabel'), sub: t('mediumSub'), depth: 3,         color: '#C9A84C' },
+    { value: 'hard',   label: t('hardLabel'),   sub: t('hardSub'),   depth: hardDepth, color: '#E05A5A' },
   ];
 
   return (

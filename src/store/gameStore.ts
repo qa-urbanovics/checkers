@@ -120,8 +120,8 @@ export const useGameStore = create<GameStore>()(
         if (game.status !== 'playing') return;
         if (piece.color !== game.currentTurn) return;
 
-        // If in capture chain, only allow that piece
-        if (game.captureChain && game.captureChain.fromRow !== piece.row) return;
+        // If in capture chain, only allow the chain piece
+        if (game.captureChain && (game.captureChain.fromRow !== piece.row || game.captureChain.fromCol !== piece.col)) return;
 
         const mustCapture = game.captureChain !== null ||
           getAllValidMoves(game.currentTurn, game.board, game.boardSize, game.rules)
