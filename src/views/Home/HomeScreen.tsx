@@ -4,7 +4,7 @@ import { useT } from '../../i18n';
 function CheckersLogo({ size = 80 }: { size?: number }) {
   return (
     <img
-      src="/logo.png"
+      src={import.meta.env.BASE_URL + 'logo.png'}
       width={size}
       height={size}
       style={{ objectFit: 'contain', filter: 'drop-shadow(0 8px 24px rgba(201,168,76,0.3))' }}
