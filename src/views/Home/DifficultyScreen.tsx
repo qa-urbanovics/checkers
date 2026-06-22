@@ -19,7 +19,7 @@ export function DifficultyScreen() {
   const levels: { value: AIDifficulty; label: string; sub: string; depth: number; color: string }[] = [
     { value: 'easy',   label: t('easyLabel'),   sub: t('easySub'),   depth: 1, color: '#5ECC86' },
     { value: 'medium', label: t('mediumLabel'), sub: t('mediumSub'), depth: 3, color: '#C9A84C' },
-    { value: 'hard',   label: t('hardLabel'),   sub: t('hardSub'),   depth: 6, color: '#E05A5A' },
+    { value: 'hard',   label: t('hardLabel'),   sub: t('hardSub'),   depth: 7, color: '#E05A5A' },
   ];
 
   return (
