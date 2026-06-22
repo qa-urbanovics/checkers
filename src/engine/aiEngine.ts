@@ -129,7 +129,8 @@ function minimax(
   size: BoardSize,
   rules: GameRules
 ): number {
-  const currentColor: PlayerColor = isMaximizing ? aiColor : (aiColor === 'red' ? 'black' : 'red');
+  // evaluate() returns + = good for red. Red maximizes, black minimizes.
+  const currentColor: PlayerColor = isMaximizing ? 'red' : 'black';
   const outcomes = getAIMoves(currentColor, board, size, rules);
 
   if (depth === 0 || outcomes.length === 0) {
@@ -175,11 +176,13 @@ export function getBestMove(
 
   const depth = DIFFICULTY_DEPTH[difficulty];
   let bestMove: Move | null = null;
-  let bestScore = -Infinity;
+  // AI is black → minimizes (evaluate + = good for red = bad for black)
+  let bestScore = Infinity;
 
   for (const outcome of outcomes) {
-    const score = minimax(outcome.finalBoard, depth - 1, -Infinity, Infinity, false, aiColor, size, rules);
-    if (score > bestScore) {
+    // After AI (black) moves, red goes next → isMaximizing = true
+    const score = minimax(outcome.finalBoard, depth - 1, -Infinity, Infinity, true, aiColor, size, rules);
+    if (score < bestScore) {
       bestScore = score;
       bestMove = outcome.firstMove;
     }
