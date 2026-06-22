@@ -1,0 +1,182 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body, #root {
+    width: 100%; height: 100%; overflow: hidden;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #050B06;
+    color: #E0EDE1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+}
+
+:root {
+  --bg: #050B06;
+  --surface: rgba(255,255,255,0.035);
+  --surface-hover: rgba(255,255,255,0.06);
+  --border: rgba(255,255,255,0.07);
+  --border-accent: rgba(94,204,134,0.2);
+  --emerald: #5ECC86;
+  --emerald-dark: #3A9E62;
+  --gold: #C9A84C;
+  --text: #E0EDE1;
+  --text-muted: #5A7060;
+  --danger: #E05A5A;
+}
+
+.btn-primary {
+  width: 100%;
+  background: linear-gradient(135deg, #5ECC86 0%, #3A9E62 100%);
+  color: #050B06;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 16px;
+  padding: 16px 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 24px rgba(94,204,134,0.35), 0 1px 0 rgba(255,255,255,0.2) inset;
+  transition: transform 0.12s ease, filter 0.12s ease, box-shadow 0.12s ease;
+}
+.btn-primary:active {
+  transform: scale(0.97);
+  filter: brightness(0.92);
+  box-shadow: 0 2px 12px rgba(94,204,134,0.2);
+}
+
+.btn-ghost {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  color: #A0B8A4;
+  font-weight: 600;
+  font-size: 15px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 15px 24px;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+.btn-ghost:active {
+  transform: scale(0.97);
+  background: rgba(255,255,255,0.07);
+}
+
+.btn-outline {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  color: #8AA890;
+  font-weight: 600;
+  font-size: 15px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  padding: 14px 24px;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+.btn-outline:active {
+  transform: scale(0.97);
+  background: rgba(255,255,255,0.07);
+}
+
+.btn-gold {
+  width: 100%;
+  background: linear-gradient(135deg, #C9A84C 0%, #9A7A2A 100%);
+  color: #1A1000;
+  font-weight: 800;
+  font-size: 15px;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(201,168,76,0.4);
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+.btn-gold:active {
+  transform: scale(0.97);
+  filter: brightness(0.92);
+}
+
+.card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 20px;
+  padding: 18px;
+}
+
+.card-active {
+  border-color: rgba(94,204,134,0.45);
+  background: rgba(94,204,134,0.06);
+  box-shadow: 0 0 28px rgba(94,204,134,0.12);
+}
+
+.nav-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 7px 14px;
+  color: #8AA890;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  white-space: nowrap;
+}
+.nav-btn:active { background: rgba(255,255,255,0.09); }
+
+.menu-card {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 18px;
+  padding: 16px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+.menu-card:active {
+  transform: scale(0.98);
+  background: rgba(94,204,134,0.06);
+  border-color: rgba(94,204,134,0.25);
+}
+
+.screen-enter {
+  animation: screenSlideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes screenSlideIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes crownPop {
+  0%   { transform: scale(0) rotate(-90deg); opacity: 0; }
+  70%  { transform: scale(1.15) rotate(8deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.scroll {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll::-webkit-scrollbar { display: none; }
