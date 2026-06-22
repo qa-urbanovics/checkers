@@ -86,5 +86,5 @@ export interface AppSettings {
   showValidMoves: boolean;
   boardTheme: 'emerald' | 'classic' | 'wood' | 'marble';
   pieceTheme: 'classic' | 'color';
-  language: 'ru' | 'en';
+  language: 'en' | 'ru' | 'es';
 }

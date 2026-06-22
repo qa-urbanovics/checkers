@@ -120,7 +120,7 @@ export function SettingsScreen() {
             <span style={{ fontSize: 15, color: '#C0D8C4', fontWeight: 500 }}>{t('languageLabel')}</span>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
-            {([{ v: 'en', l: 'English' }, { v: 'ru', l: 'Русский' }] as const).map(lang => {
+            {([{ v: 'en', l: 'English' }, { v: 'ru', l: 'Русский' }, { v: 'es', l: 'Español' }] as const).map(lang => {
               const active = settings.language === lang.v;
               return (
                 <button key={lang.v} onClick={() => updateSettings({ language: lang.v })} style={{
