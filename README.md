@@ -1,50 +1,113 @@
-# React + TypeScript + Vite
+# Checkers: Emerald Courts
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A mobile checkers game built with React + TypeScript + Capacitor for iOS.
+Supports Russian rules (8×8) and International rules (10×10), PvP and vs AI.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Stack
 
-## Expanding the ESLint configuration
+- **React 18** + **TypeScript** + **Vite 5**
+- **Zustand 5** — state management
+- **Capacitor 7** — iOS native wrapper
+- **Tailwind CSS 3** — utility styles
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+---
 
-- Configure the top-level `parserOptions` property like this:
+## Run in browser (web dev)
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+Requires **Node.js 18+**.
+
+```bash
+# Install dependencies (first time only)
+npm install
+
+# Start dev server
+npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Open `http://localhost:5173` in the browser.
+The app is designed for a phone screen — set browser devtools to mobile view (e.g. iPhone 14 Pro, 390×844).
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+---
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+## Build for web
+
+```bash
+npm run build
 ```
+
+Output goes to `dist/`. Preview the production build:
+
+```bash
+npm run preview
+```
+
+---
+
+## Build for iOS (requires macOS + Xcode)
+
+```bash
+# 1. Build the web app
+npm run build
+
+# 2. Sync web assets into the iOS project
+npx cap sync ios
+
+# 3. Open in Xcode
+npx cap open ios
+```
+
+Then in Xcode:
+- Select your Apple developer account in **Signing & Capabilities**
+- Choose target device or simulator
+- Press **Run** (⌘R) or **Product → Archive** for App Store submission
+
+---
+
+## Project structure
+
+```
+src/
+  engine/
+    boardFactory.ts     — board initialization
+    moveValidator.ts    — move rules (Russian + International)
+    aiEngine.ts         — minimax with alpha-beta pruning
+  models/
+    types.ts            — all TypeScript types
+  store/
+    gameStore.ts        — Zustand game state
+  views/
+    Home/               — home screen
+    Game/               — board + HUD
+    Settings/           — settings screen
+    Stats/              — statistics screen
+  i18n.ts               — EN / RU / ES translations
+
+ios/                    — Capacitor iOS project (Xcode)
+docs/
+  privacy/              — Privacy Policy page (GitHub Pages)
+  appstore-listing.md   — App Store metadata (EN + RU)
+  appstore/             — App Store screenshots
+public/
+  logo.png              — app icon (transparent PNG)
+```
+
+---
+
+## Game rules
+
+| Feature | Russian 8×8 | International 10×10 |
+|---|---|---|
+| Men move | Forward only | Forward only |
+| Men capture | All 4 directions | All 4 directions |
+| King moves | Any distance (flying) | Any distance (flying) |
+| Captures mandatory | Yes | Yes |
+| Majority capture | No | Yes — must take max pieces |
+| Promotion mid-chain | Stops chain, piece promoted | Stops chain, piece promoted |
+
+---
+
+## Privacy Policy
+
+Hosted on GitHub Pages: `https://qa-urbanovics.github.io/checkers/privacy/`
