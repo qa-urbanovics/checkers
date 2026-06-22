@@ -71,13 +71,8 @@ function expandChain(piece: Piece, board: Cell[][], size: BoardSize, rules: Game
     applyMove(move, cloned, p, size);
     const movedPiece = cloned[move.toRow][move.toCol].piece!;
 
-    // Reaching promotion row stops the chain (both Russian and International)
-    const wasPromoted = movedPiece.type === 'king' && p.type === 'man';
-    if (wasPromoted) {
-      results.push(cloned);
-    } else {
-      results.push(...expandChain(movedPiece, cloned, size, rules));
-    }
+    // On promotion mid-chain, piece continues as king in both rule sets
+    results.push(...expandChain(movedPiece, cloned, size, rules));
   }
   return results;
 }
@@ -104,15 +99,10 @@ function getAIMoves(
 
     // Expand chain: the player must complete all captures
     const movedPiece = cloned[move.toRow][move.toCol].piece!;
-    const wasPromoted = movedPiece.type === 'king' && piece.type === 'man';
-
-    if (wasPromoted) {
-      outcomes.push({ firstMove: move, finalBoard: cloned });
-    } else {
-      const finalBoards = expandChain(movedPiece, cloned, size, rules);
-      for (const fb of finalBoards) {
-        outcomes.push({ firstMove: move, finalBoard: fb });
-      }
+    // On promotion mid-chain, piece continues as king in both rule sets
+    const finalBoards = expandChain(movedPiece, cloned, size, rules);
+    for (const fb of finalBoards) {
+      outcomes.push({ firstMove: move, finalBoard: fb });
     }
   }
 

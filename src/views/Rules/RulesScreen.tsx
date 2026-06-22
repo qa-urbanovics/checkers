@@ -35,9 +35,9 @@ const SECTIONS: Section[] = [
   },
   {
     icon: '♛',
-    en: { title: 'King (Flying King)', body: 'When a man reaches the last row, it becomes a King. Kings move any number of squares diagonally in any direction — like a bishop in chess. If a man is promoted during a capture chain, the chain stops at that square.' },
-    ru: { title: 'Дамка (летунья)', body: 'Когда шашка достигает последнего ряда, она становится дамкой. Дамка ходит на любое расстояние по диагонали в любом направлении — как слон в шахматах. Если шашка превращается в дамку в процессе серии взятий — серия на этом прерывается.' },
-    es: { title: 'Dama (voladora)', body: 'Cuando una pieza llega a la última fila, se convierte en Dama. Las Damas se mueven cualquier número de casillas en diagonal en cualquier dirección — como el alfil en ajedrez. Si una pieza se corona durante una cadena de capturas, la cadena se detiene.' },
+    en: { title: 'King (Flying King)', body: 'When a man reaches the last row, it becomes a King. Kings move any number of squares diagonally in any direction — like a bishop in chess. If a man is promoted during a capture chain, it immediately continues capturing as a King.' },
+    ru: { title: 'Дамка (летунья)', body: 'Когда шашка достигает последнего ряда, она становится дамкой. Дамка ходит на любое расстояние по диагонали в любом направлении — как слон в шахматах. Если шашка превращается в дамку в серии взятий — она сразу продолжает бить уже как дамка.' },
+    es: { title: 'Dama (voladora)', body: 'Cuando una pieza llega a la última fila, se convierte en Dama. Las Damas se mueven cualquier número de casillas en diagonal en cualquier dirección — como el alfil en ajedrez. Si una pieza se corona durante una cadena de capturas, continúa capturando inmediatamente como Dama.' },
   },
 ];
 
@@ -62,9 +62,9 @@ const DIFF_ROWS: Array<{
     es: ['Captura', 'Cualquier captura', 'Capturar el máximo'],
   },
   {
-    en: ['On promotion', 'Chain stops', 'Chain stops'],
-    ru: ['Превращение в дамку', 'Серия прерывается', 'Серия прерывается'],
-    es: ['Al coronar', 'La cadena se detiene', 'La cadena se detiene'],
+    en: ['On promotion', 'Chain continues as king', 'Chain continues as king'],
+    ru: ['Превращение в дамку', 'Серия продолжается как дамка', 'Серия продолжается как дамка'],
+    es: ['Al coronar', 'La cadena continúa como dama', 'La cadena continúa como dama'],
   },
   {
     en: ['King movement', 'Any distance', 'Any distance'],

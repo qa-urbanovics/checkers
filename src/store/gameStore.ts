@@ -190,9 +190,11 @@ export const useGameStore = create<GameStore>()(
           else blackCount++;
         }
 
-        // Check for continued capture chain (non-king, captured this turn)
+        // Check for continued capture chain.
+        // Both rule sets: on promotion mid-chain, piece continues capturing as a king.
         let captureChain: Move | null = null;
-        if (move.captures.length > 0 && !promoted) {
+        const canContinue = move.captures.length > 0;
+        if (canContinue) {
           const chainMoves = getValidMovesForPiece(movedPiece, newBoard, game.boardSize, true, game.rules);
           if (chainMoves.length > 0) {
             captureChain = { ...move, fromRow: move.toRow, fromCol: move.toCol };

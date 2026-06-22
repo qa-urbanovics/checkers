@@ -118,18 +118,16 @@ function maxCaptureCount(
   piece: Piece,
   board: Cell[][],
   size: BoardSize,
-  capturedIds: Set<string>
+  capturedIds: Set<string>,
+  rules: GameRules
 ): number {
   const singles = getSingleCaptures(piece, board, size, capturedIds);
   if (singles.length === 0) return 0;
 
   let best = 0;
   for (const move of singles) {
-    // Both Russian and International: reaching promotion row stops the chain
-    if (shouldPromote(piece, move.toRow, size)) {
-      best = Math.max(best, 1);
-      continue;
-    }
+    const isPromoted = shouldPromote(piece, move.toRow, size);
+
     const cap = move.captures[0];
     const newIds = new Set(capturedIds);
     newIds.add(cap.pieceId);
@@ -137,10 +135,14 @@ function maxCaptureCount(
     const temp = cloneBoard(board);
     temp[move.fromRow][move.fromCol].piece = null;
     temp[cap.row][cap.col].piece = null;
-    const moved: Piece = { ...piece, row: move.toRow, col: move.toCol };
+    // On promotion mid-chain, piece continues as king in both rule sets
+    const moved: Piece = {
+      ...piece, row: move.toRow, col: move.toCol,
+      type: isPromoted ? 'king' : piece.type,
+    };
     temp[move.toRow][move.toCol].piece = moved;
 
-    best = Math.max(best, 1 + maxCaptureCount(moved, temp, size, newIds));
+    best = Math.max(best, 1 + maxCaptureCount(moved, temp, size, newIds, rules));
   }
   return best;
 }
@@ -162,12 +164,11 @@ function getCaptureMovesForPiece(
   if (rules === 'russian') return singles;
 
   // International: only return moves that are part of a max-capture sequence
-  const req = required ?? maxCaptureCount(piece, board, size, capturedIds);
+  const req = required ?? maxCaptureCount(piece, board, size, capturedIds, rules);
   if (req === 0) return singles;
 
   return singles.filter(move => {
-    // If this jump promotes, chain stops here — valid only if req === 1
-    if (shouldPromote(piece, move.toRow, size)) return req === 1;
+    const isPromoted = shouldPromote(piece, move.toRow, size);
 
     const cap = move.captures[0];
     const newIds = new Set(capturedIds);
@@ -176,10 +177,14 @@ function getCaptureMovesForPiece(
     const temp = cloneBoard(board);
     temp[move.fromRow][move.fromCol].piece = null;
     temp[cap.row][cap.col].piece = null;
-    const moved: Piece = { ...piece, row: move.toRow, col: move.toCol };
+    // On promotion mid-chain, piece continues as king in both rule sets
+    const moved: Piece = {
+      ...piece, row: move.toRow, col: move.toCol,
+      type: isPromoted ? 'king' : piece.type,
+    };
     temp[move.toRow][move.toCol].piece = moved;
 
-    return 1 + maxCaptureCount(moved, temp, size, newIds) >= req;
+    return 1 + maxCaptureCount(moved, temp, size, newIds, rules) >= req;
   });
 }
 
@@ -216,7 +221,7 @@ export function getAllValidMoves(
   }
 
   // International: majority capture — must take the maximum possible pieces
-  const maxPerPiece = pieces.map(p => maxCaptureCount(p, board, size, new Set()));
+  const maxPerPiece = pieces.map(p => maxCaptureCount(p, board, size, new Set(), rules));
   const globalMax = Math.max(...maxPerPiece);
 
   const moves: Move[] = [];
