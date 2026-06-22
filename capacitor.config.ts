@@ -4,10 +4,10 @@ const config: CapacitorConfig = {
   // ── Bundle ID ──────────────────────────────────────────────────────────────
   // Must be unique in App Store. Register at developer.apple.com first.
   // Format: com.yourcompany.appname  (reverse DNS notation)
-  appId: 'com.emeraldcourts.checkers',
+  appId: 'com.emeraldcheckers.app',
 
   // ── App display name (shown under icon on home screen) ────────────────────
-  appName: 'Шашки',
+  appName: 'Emerald Checkers',
 
   // ── Built web assets directory ────────────────────────────────────────────
   webDir: 'dist',

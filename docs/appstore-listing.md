@@ -1,11 +1,11 @@
-# App Store Listing — Checkers: Emerald Courts
+# App Store Listing — Emerald Checkers
 
 ---
 
 ## ENGLISH (Primary)
 
 ### Name
-`Checkers: Emerald Courts`
+`Emerald Checkers`
 *(30 chars max — exact: 26)*
 
 ### Subtitle
@@ -14,7 +14,7 @@
 
 ### Promotional Text
 *(170 chars max — shown at top, can be updated without new build)*
-`Premium checkers experience with AI opponents, two board sizes, and beautiful Emerald Courts design. Play solo or pass-and-play with a friend.`
+`Premium checkers experience with AI opponents, two board sizes, and beautiful Emerald Checkers design. Play solo or pass-and-play with a friend.`
 
 ### Keywords
 *(100 chars max, comma-separated, no spaces)*
@@ -24,7 +24,7 @@
 *(4000 chars max)*
 
 ```
-Checkers: Emerald Courts brings the timeless game of draughts to life with a premium, handcrafted design.
+Emerald Checkers brings the timeless game of draughts to life with a premium, handcrafted design.
 
 GAME MODES
 • vs AI — challenge the computer at Easy, Medium, or Hard difficulty
@@ -47,14 +47,14 @@ CUSTOMIZATION
 • Language: English and Russian
 
 DESIGN
-Emerald Courts features a dark, premium aesthetic with gold accents, smooth animations, and a clean interface optimized for one-handed play. Looks great on every iPhone and iPad.
+Emerald Checkers features a dark, premium aesthetic with gold accents, smooth animations, and a clean interface optimized for one-handed play. Looks great on every iPhone and iPad.
 
 No ads. No subscriptions. No internet required. Just pure checkers.
 ```
 
 ### What's New (v1.0.0)
 ```
-First release. Welcome to Emerald Courts!
+First release. Welcome to Emerald Checkers!
 ```
 
 ---
@@ -62,7 +62,7 @@ First release. Welcome to Emerald Courts!
 ## RUSSIAN (Localisation)
 
 ### Name
-`Шашки: Emerald Courts`
+`Emerald Checkers`
 *(30 символов макс — точно: 21)*
 
 ### Subtitle
@@ -70,7 +70,7 @@ First release. Welcome to Emerald Courts!
 *(30 символов макс — точно: 30)*
 
 ### Promotional Text
-`Премиум шашки с ИИ-соперником, двумя размерами доски и красивым дизайном Emerald Courts. Играй один или с другом.`
+`Премиум шашки с ИИ-соперником, двумя размерами доски и красивым дизайном Emerald Checkers. Играй один или с другом.`
 
 ### Keywords
 `шашки,checkers,draughts,игра,настольная,стратегия,ИИ,два игрока,офлайн,классика`
@@ -78,7 +78,7 @@ First release. Welcome to Emerald Courts!
 ### Description
 
 ```
-Шашки: Emerald Courts — это классическая игра в шашки с премиальным дизайном и продуманным игровым процессом.
+Emerald Checkers — это классическая игра в шашки с премиальным дизайном и продуманным игровым процессом.
 
 РЕЖИМЫ ИГРЫ
 • Против ИИ — сразись с компьютером: Лёгкий, Средний или Сложный уровень
@@ -108,7 +108,7 @@ First release. Welcome to Emerald Courts!
 
 ### What's New (v1.0.0)
 ```
-Первый выпуск. Добро пожаловать в Emerald Courts!
+Первый выпуск. Добро пожаловать в Emerald Checkers!
 ```
 
 ---
@@ -123,7 +123,7 @@ First release. Welcome to Emerald Courts!
 | **Secondary Cat.**  | Games → Strategy               |
 | **Age Rating**      | 4+                             |
 | **Price**           | Free                           |
-| **Copyright**       | © 2026 Emerald Courts          |
+| **Copyright**       | © 2026 Emerald Checkers          |
 | **Support URL**     | *(нужна ссылка)*               |
 | **Privacy Policy**  | *(нужна ссылка)*               |
 
@@ -134,7 +134,7 @@ First release. Welcome to Emerald Courts!
 Можно разместить на GitHub Pages или любом хостинге.
 
 ```
-Checkers: Emerald Courts does not collect, store, or share any personal data.
+Emerald Checkers does not collect, store, or share any personal data.
 All game settings and statistics are stored locally on your device only.
 No analytics, no tracking, no third-party SDKs.
 ```

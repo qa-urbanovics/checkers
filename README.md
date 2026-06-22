@@ -1,4 +1,4 @@
-# Checkers: Emerald Courts
+# Emerald Checkers
 
 A mobile checkers game built with React + TypeScript + Capacitor for iOS.
 Supports Russian rules (8×8) and International rules (10×10), PvP and vs AI.
