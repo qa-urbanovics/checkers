@@ -1,17 +1,22 @@
-import { Cell, Move, Piece, PlayerColor, BoardSize } from '../models/types';
+import { Cell, Move, Piece, PlayerColor, BoardSize, GameRules } from '../models/types';
+import { cloneBoard } from './boardFactory';
 
-// Direction a piece can move (row delta)
 function getMoveDirs(piece: Piece): number[] {
   if (piece.type === 'king') return [-1, 1];
-  return piece.color === 'red' ? [-1] : [1]; // red moves up, black moves down
+  return piece.color === 'red' ? [-1] : [1];
 }
 
-// Check if position is inside the board
 function inBounds(row: number, col: number, size: BoardSize): boolean {
   return row >= 0 && row < size && col >= 0 && col < size;
 }
 
-// Get all simple (non-capture) moves for a piece
+// Check if position is on promotion row
+export function shouldPromote(piece: Piece, toRow: number, size: BoardSize): boolean {
+  if (piece.type === 'king') return false;
+  return piece.color === 'red' ? toRow === 0 : toRow === size - 1;
+}
+
+// Simple (non-capture) moves for a piece
 function getSimpleMoves(piece: Piece, board: Cell[][], size: BoardSize): Move[] {
   const moves: Move[] = [];
   const dirs = getMoveDirs(piece);
@@ -19,12 +24,11 @@ function getSimpleMoves(piece: Piece, board: Cell[][], size: BoardSize): Move[] 
   for (const rowDir of dirs) {
     for (const colDir of [-1, 1]) {
       if (piece.type === 'king') {
-        // King slides diagonally until blocked
+        // King slides any distance diagonally
         let r = piece.row + rowDir;
         let c = piece.col + colDir;
         while (inBounds(r, c, size)) {
-          const cell = board[r][c];
-          if (cell.piece) break; // blocked
+          if (board[r][c].piece) break;
           moves.push({ fromRow: piece.row, fromCol: piece.col, toRow: r, toCol: c, captures: [] });
           r += rowDir;
           c += colDir;
@@ -41,18 +45,21 @@ function getSimpleMoves(piece: Piece, board: Cell[][], size: BoardSize): Move[] 
   return moves;
 }
 
-// Get all capture moves for a piece (recursive for chain captures)
-function getCaptureMoves(
+// Single-step capture moves for a piece (all 4 diagonal directions).
+// capturedIds: pieces already captured in this chain (skip them).
+// Both Russian and International allow men to capture backward.
+function getSingleCaptures(
   piece: Piece,
   board: Cell[][],
   size: BoardSize,
-  capturedIds: Set<string> = new Set()
+  capturedIds: Set<string>
 ): Move[] {
   const moves: Move[] = [];
+
   for (const rowDir of [-1, 1]) {
     for (const colDir of [-1, 1]) {
       if (piece.type === 'king') {
-        // King can capture any enemy piece along the diagonal
+        // King slides along diagonal until it finds an enemy, then can land anywhere beyond
         let r = piece.row + rowDir;
         let c = piece.col + colDir;
         let enemyFound: Piece | null = null;
@@ -62,17 +69,14 @@ function getCaptureMoves(
           const cell = board[r][c];
           if (cell.piece) {
             if (cell.piece.color === piece.color || capturedIds.has(cell.piece.id)) break;
-            if (enemyFound) break; // second enemy in same diagonal — stop
+            if (enemyFound) break; // second enemy on same diagonal — blocked
             enemyFound = cell.piece;
             enemyRow = r;
             enemyCol = c;
           } else if (enemyFound) {
-            // Landing square after captured piece
+            // Any empty square beyond the captured piece is a valid landing spot
             moves.push({
-              fromRow: piece.row,
-              fromCol: piece.col,
-              toRow: r,
-              toCol: c,
+              fromRow: piece.row, fromCol: piece.col, toRow: r, toCol: c,
               captures: [{ row: enemyRow, col: enemyCol, pieceId: enemyFound.id }],
             });
           }
@@ -80,7 +84,7 @@ function getCaptureMoves(
           c += colDir;
         }
       } else {
-        // Man: jumps exactly 2 squares
+        // Man jumps exactly one square over enemy
         const midR = piece.row + rowDir;
         const midC = piece.col + colDir;
         const landR = piece.row + rowDir * 2;
@@ -98,10 +102,7 @@ function getCaptureMoves(
           !landCell?.piece
         ) {
           moves.push({
-            fromRow: piece.row,
-            fromCol: piece.col,
-            toRow: landR,
-            toCol: landC,
+            fromRow: piece.row, fromCol: piece.col, toRow: landR, toCol: landC,
             captures: [{ row: midR, col: midC, pieceId: midCell.piece.id }],
           });
         }
@@ -111,63 +112,151 @@ function getCaptureMoves(
   return moves;
 }
 
-// Get ALL valid moves for a player (captures are mandatory)
-export function getAllValidMoves(color: PlayerColor, board: Cell[][], size: BoardSize): Move[] {
-  const allPieces: Piece[] = [];
-  for (let r = 0; r < size; r++) {
-    for (let c = 0; c < size; c++) {
-      const p = board[r][c].piece;
-      if (p && p.color === color) allPieces.push(p);
+// Max captures achievable from a position via DFS.
+// Used for the international majority capture rule.
+function maxCaptureCount(
+  piece: Piece,
+  board: Cell[][],
+  size: BoardSize,
+  capturedIds: Set<string>
+): number {
+  const singles = getSingleCaptures(piece, board, size, capturedIds);
+  if (singles.length === 0) return 0;
+
+  let best = 0;
+  for (const move of singles) {
+    // Both Russian and International: reaching promotion row stops the chain
+    if (shouldPromote(piece, move.toRow, size)) {
+      best = Math.max(best, 1);
+      continue;
     }
-  }
+    const cap = move.captures[0];
+    const newIds = new Set(capturedIds);
+    newIds.add(cap.pieceId);
 
-  // Check if any captures exist (captures are mandatory)
-  const captures: Move[] = [];
-  for (const piece of allPieces) {
-    captures.push(...getCaptureMoves(piece, board, size));
-  }
-  if (captures.length > 0) return captures;
+    const temp = cloneBoard(board);
+    temp[move.fromRow][move.fromCol].piece = null;
+    temp[cap.row][cap.col].piece = null;
+    const moved: Piece = { ...piece, row: move.toRow, col: move.toCol };
+    temp[move.toRow][move.toCol].piece = moved;
 
-  // No captures — return simple moves
-  const simple: Move[] = [];
-  for (const piece of allPieces) {
-    simple.push(...getSimpleMoves(piece, board, size));
+    best = Math.max(best, 1 + maxCaptureCount(moved, temp, size, newIds));
   }
-  return simple;
+  return best;
 }
 
-// Get valid moves for a specific piece
-export function getValidMovesForPiece(piece: Piece, board: Cell[][], size: BoardSize, mustCapture: boolean): Move[] {
-  if (mustCapture) {
-    return getCaptureMoves(piece, board, size);
+// Get capture moves for a piece, with majority-capture filtering for international rules.
+// `required`: if provided, only return moves that can reach this many total captures.
+function getCaptureMovesForPiece(
+  piece: Piece,
+  board: Cell[][],
+  size: BoardSize,
+  capturedIds: Set<string>,
+  rules: GameRules,
+  required?: number
+): Move[] {
+  const singles = getSingleCaptures(piece, board, size, capturedIds);
+  if (singles.length === 0) return [];
+
+  // Russian rules: any capture is valid — no majority filtering needed
+  if (rules === 'russian') return singles;
+
+  // International: only return moves that are part of a max-capture sequence
+  const req = required ?? maxCaptureCount(piece, board, size, capturedIds);
+  if (req === 0) return singles;
+
+  return singles.filter(move => {
+    // If this jump promotes, chain stops here — valid only if req === 1
+    if (shouldPromote(piece, move.toRow, size)) return req === 1;
+
+    const cap = move.captures[0];
+    const newIds = new Set(capturedIds);
+    newIds.add(cap.pieceId);
+
+    const temp = cloneBoard(board);
+    temp[move.fromRow][move.fromCol].piece = null;
+    temp[cap.row][cap.col].piece = null;
+    const moved: Piece = { ...piece, row: move.toRow, col: move.toCol };
+    temp[move.toRow][move.toCol].piece = moved;
+
+    return 1 + maxCaptureCount(moved, temp, size, newIds) >= req;
+  });
+}
+
+// All valid moves for a color. Captures are mandatory.
+// For international: applies majority capture (must take the most pieces possible).
+export function getAllValidMoves(
+  color: PlayerColor,
+  board: Cell[][],
+  size: BoardSize,
+  rules: GameRules
+): Move[] {
+  const pieces: Piece[] = [];
+  for (let r = 0; r < size; r++)
+    for (let c = 0; c < size; c++) {
+      const p = board[r][c].piece;
+      if (p && p.color === color) pieces.push(p);
+    }
+
+  // Check if any captures are available
+  const hasCaptures = pieces.some(p => getSingleCaptures(p, board, size, new Set()).length > 0);
+
+  if (!hasCaptures) {
+    // No captures — return all simple moves
+    const moves: Move[] = [];
+    for (const p of pieces) moves.push(...getSimpleMoves(p, board, size));
+    return moves;
   }
-  const captures = getCaptureMoves(piece, board, size);
-  if (captures.length > 0) return captures;
+
+  if (rules === 'russian') {
+    // Russian: any capture is mandatory, no majority requirement
+    const moves: Move[] = [];
+    for (const p of pieces) moves.push(...getSingleCaptures(p, board, size, new Set()));
+    return moves;
+  }
+
+  // International: majority capture — must take the maximum possible pieces
+  const maxPerPiece = pieces.map(p => maxCaptureCount(p, board, size, new Set()));
+  const globalMax = Math.max(...maxPerPiece);
+
+  const moves: Move[] = [];
+  for (let i = 0; i < pieces.length; i++) {
+    if (maxPerPiece[i] === globalMax) {
+      moves.push(...getCaptureMovesForPiece(pieces[i], board, size, new Set(), rules, globalMax));
+    }
+  }
+  return moves;
+}
+
+// Valid moves for a specific piece. Used when a piece is selected by the player.
+export function getValidMovesForPiece(
+  piece: Piece,
+  board: Cell[][],
+  size: BoardSize,
+  mustCapture: boolean,
+  rules: GameRules
+): Move[] {
+  if (mustCapture) {
+    return getCaptureMovesForPiece(piece, board, size, new Set(), rules);
+  }
+  const captures = getSingleCaptures(piece, board, size, new Set());
+  if (captures.length > 0) {
+    return getCaptureMovesForPiece(piece, board, size, new Set(), rules);
+  }
   return getSimpleMoves(piece, board, size);
 }
 
-// Check if a piece should be promoted to king
-export function shouldPromote(piece: Piece, toRow: number, size: BoardSize): boolean {
-  if (piece.type === 'king') return false;
-  return piece.color === 'red' ? toRow === 0 : toRow === size - 1;
-}
-
-// Apply a move to the board (mutates board for performance)
+// Apply a move to the board (mutates in place — used by AI for search)
 export function applyMove(move: Move, board: Cell[][], piece: Piece, size: BoardSize): void {
-  // Remove from old position
   board[move.fromRow][move.fromCol].piece = null;
-
-  // Remove captured pieces
   for (const cap of move.captures) {
     board[cap.row][cap.col].piece = null;
   }
-
-  // Place piece at new position
-  const updatedPiece: Piece = {
+  const updated: Piece = {
     ...piece,
     row: move.toRow,
     col: move.toCol,
     type: shouldPromote(piece, move.toRow, size) ? 'king' : piece.type,
   };
-  board[move.toRow][move.toCol].piece = updatedPiece;
+  board[move.toRow][move.toCol].piece = updated;
 }

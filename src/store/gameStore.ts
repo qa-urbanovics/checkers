@@ -123,10 +123,10 @@ export const useGameStore = create<GameStore>()(
         if (game.captureChain && game.captureChain.fromRow !== piece.row) return;
 
         const mustCapture = game.captureChain !== null ||
-          getAllValidMoves(game.currentTurn, game.board, game.boardSize)
+          getAllValidMoves(game.currentTurn, game.board, game.boardSize, game.rules)
             .some(m => m.captures.length > 0);
 
-        const validMoves = getValidMovesForPiece(piece, game.board, game.boardSize, mustCapture);
+        const validMoves = getValidMovesForPiece(piece, game.board, game.boardSize, mustCapture, game.rules);
 
         set({
           game: {
@@ -178,7 +178,7 @@ export const useGameStore = create<GameStore>()(
         // Check for continued capture chain (non-king, captured this turn)
         let captureChain: Move | null = null;
         if (move.captures.length > 0 && !promoted) {
-          const chainMoves = getValidMovesForPiece(movedPiece, newBoard, game.boardSize, true);
+          const chainMoves = getValidMovesForPiece(movedPiece, newBoard, game.boardSize, true, game.rules);
           if (chainMoves.length > 0) {
             captureChain = { ...move, fromRow: move.toRow, fromCol: move.toCol };
           }
@@ -191,7 +191,7 @@ export const useGameStore = create<GameStore>()(
         // Check win condition
         let winner: PlayerColor | null = null;
         let status: GameStatus = 'playing';
-        const nextMoves = getAllValidMoves(nextTurn, newBoard, game.boardSize);
+        const nextMoves = getAllValidMoves(nextTurn, newBoard, game.boardSize, game.rules);
 
         if (redCount === 0) { winner = 'black'; status = 'finished'; }
         else if (blackCount === 0) { winner = 'red'; status = 'finished'; }
@@ -239,7 +239,7 @@ export const useGameStore = create<GameStore>()(
             winner,
             selectedPiece: captureChain ? movedPiece : null,
             validMoves: captureChain
-              ? getValidMovesForPiece(movedPiece, newBoard, game.boardSize, true)
+              ? getValidMovesForPiece(movedPiece, newBoard, game.boardSize, true, game.rules)
               : nextMoves,
             moveHistory: [...game.moveHistory, move],
             captureChain,
@@ -259,7 +259,7 @@ export const useGameStore = create<GameStore>()(
         ) {
           setTimeout(() => {
             const state = get().game;
-            const aiMove = getBestMove(state.board, 'black', state.aiDifficulty, state.boardSize);
+            const aiMove = getBestMove(state.board, 'black', state.aiDifficulty, state.boardSize, state.rules);
             if (aiMove) get().makeMove(aiMove);
           }, 400);
         }

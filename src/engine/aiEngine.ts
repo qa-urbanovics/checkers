@@ -1,5 +1,5 @@
-import { AIDifficulty, BoardSize, Cell, Move, PlayerColor } from '../models/types';
-import { getAllValidMoves, applyMove } from './moveValidator';
+import { AIDifficulty, BoardSize, Cell, GameRules, Move, Piece, PlayerColor } from '../models/types';
+import { getAllValidMoves, getValidMovesForPiece, applyMove, shouldPromote } from './moveValidator';
 import { cloneBoard } from './boardFactory';
 
 // ============================================================
@@ -12,7 +12,6 @@ const DIFFICULTY_DEPTH: Record<AIDifficulty, number> = {
   hard: 6,
 };
 
-// Heuristic: evaluate board position for 'red' AI
 function evaluate(board: Cell[][], size: BoardSize): number {
   let score = 0;
   const center = size / 2 - 0.5;
@@ -23,34 +22,90 @@ function evaluate(board: Cell[][], size: BoardSize): number {
       if (!piece) continue;
 
       const isRed = piece.color === 'red';
-      const multiplier = isRed ? 1 : -1;
+      const mul = isRed ? 1 : -1;
 
-      // Piece value
-      score += multiplier * (piece.type === 'king' ? 300 : 100);
+      score += mul * (piece.type === 'king' ? 350 : 100);
 
-      // King bonus — kings are very valuable
-      if (piece.type === 'king') {
-        score += multiplier * 50;
-      }
-
-      // Center control bonus
       const distToCenter = Math.abs(r - center) + Math.abs(c - center);
-      score += multiplier * (size - distToCenter) * 2;
+      score += mul * (size - distToCenter) * 2;
 
-      // Advancement bonus for men (closer to promotion)
       if (piece.type === 'man') {
         const advancement = isRed ? size - 1 - r : r;
-        score += multiplier * advancement * 3;
+        score += mul * advancement * 3;
       }
 
-      // Edge pieces are slightly weaker (easier to trap)
-      if (c === 0 || c === size - 1) {
-        score -= multiplier * 5;
-      }
+      if (c === 0 || c === size - 1) score -= mul * 5;
     }
   }
 
   return score;
+}
+
+// A single resolved outcome: the first step taken + final board after full capture chain.
+interface MoveOutcome {
+  firstMove: Move;
+  finalBoard: Cell[][];
+}
+
+// Expand a capture chain to completion, returning all possible final boards.
+// This handles multi-jump sequences so the AI evaluates complete moves, not partial ones.
+function expandChain(piece: Piece, board: Cell[][], size: BoardSize, rules: GameRules): Cell[][] {
+  const chainMoves = getValidMovesForPiece(piece, board, size, true, rules);
+  if (chainMoves.length === 0) return [board];
+
+  const results: Cell[][] = [];
+  for (const move of chainMoves) {
+    const cloned = cloneBoard(board);
+    const p = cloned[move.fromRow][move.fromCol].piece!;
+    applyMove(move, cloned, p, size);
+    const movedPiece = cloned[move.toRow][move.toCol].piece!;
+
+    // Reaching promotion row stops the chain (both Russian and International)
+    const wasPromoted = movedPiece.type === 'king' && p.type === 'man';
+    if (wasPromoted) {
+      results.push(cloned);
+    } else {
+      results.push(...expandChain(movedPiece, cloned, size, rules));
+    }
+  }
+  return results;
+}
+
+// All possible complete moves (including full capture chains) for a color.
+function getAIMoves(
+  color: PlayerColor,
+  board: Cell[][],
+  size: BoardSize,
+  rules: GameRules
+): MoveOutcome[] {
+  const singleMoves = getAllValidMoves(color, board, size, rules);
+  const outcomes: MoveOutcome[] = [];
+
+  for (const move of singleMoves) {
+    const cloned = cloneBoard(board);
+    const piece = cloned[move.fromRow][move.fromCol].piece!;
+    applyMove(move, cloned, piece, size);
+
+    if (move.captures.length === 0) {
+      outcomes.push({ firstMove: move, finalBoard: cloned });
+      continue;
+    }
+
+    // Expand chain: the player must complete all captures
+    const movedPiece = cloned[move.toRow][move.toCol].piece!;
+    const wasPromoted = movedPiece.type === 'king' && piece.type === 'man';
+
+    if (wasPromoted) {
+      outcomes.push({ firstMove: move, finalBoard: cloned });
+    } else {
+      const finalBoards = expandChain(movedPiece, cloned, size, rules);
+      for (const fb of finalBoards) {
+        outcomes.push({ firstMove: move, finalBoard: fb });
+      }
+    }
+  }
+
+  return outcomes;
 }
 
 function minimax(
@@ -60,72 +115,62 @@ function minimax(
   beta: number,
   isMaximizing: boolean,
   aiColor: PlayerColor,
-  size: BoardSize
+  size: BoardSize,
+  rules: GameRules
 ): number {
   const currentColor: PlayerColor = isMaximizing ? aiColor : (aiColor === 'red' ? 'black' : 'red');
-  const moves = getAllValidMoves(currentColor, board, size);
+  const outcomes = getAIMoves(currentColor, board, size, rules);
 
-  if (depth === 0 || moves.length === 0) {
-    if (moves.length === 0) {
-      return isMaximizing ? -10000 : 10000; // losing position
-    }
+  if (depth === 0 || outcomes.length === 0) {
+    if (outcomes.length === 0) return isMaximizing ? -10000 : 10000;
     return evaluate(board, size);
   }
 
   if (isMaximizing) {
     let maxEval = -Infinity;
-    for (const move of moves) {
-      const cloned = cloneBoard(board);
-      const piece = cloned[move.fromRow][move.fromCol].piece!;
-      applyMove(move, cloned, piece, size);
-      const evalScore = minimax(cloned, depth - 1, alpha, beta, false, aiColor, size);
-      maxEval = Math.max(maxEval, evalScore);
-      alpha = Math.max(alpha, evalScore);
-      if (beta <= alpha) break; // Alpha-Beta pruning
+    for (const outcome of outcomes) {
+      const score = minimax(outcome.finalBoard, depth - 1, alpha, beta, false, aiColor, size, rules);
+      if (score > maxEval) maxEval = score;
+      if (maxEval > alpha) alpha = maxEval;
+      if (beta <= alpha) break;
     }
     return maxEval;
   } else {
     let minEval = Infinity;
-    for (const move of moves) {
-      const cloned = cloneBoard(board);
-      const piece = cloned[move.fromRow][move.fromCol].piece!;
-      applyMove(move, cloned, piece, size);
-      const evalScore = minimax(cloned, depth - 1, alpha, beta, true, aiColor, size);
-      minEval = Math.min(minEval, evalScore);
-      beta = Math.min(beta, evalScore);
+    for (const outcome of outcomes) {
+      const score = minimax(outcome.finalBoard, depth - 1, alpha, beta, true, aiColor, size, rules);
+      if (score < minEval) minEval = score;
+      if (minEval < beta) beta = minEval;
       if (beta <= alpha) break;
     }
     return minEval;
   }
 }
 
-// Get the best move for AI
 export function getBestMove(
   board: Cell[][],
   aiColor: PlayerColor,
   difficulty: AIDifficulty,
-  size: BoardSize
+  size: BoardSize,
+  rules: GameRules
 ): Move | null {
-  const moves = getAllValidMoves(aiColor, board, size);
-  if (moves.length === 0) return null;
+  const outcomes = getAIMoves(aiColor, board, size, rules);
+  if (outcomes.length === 0) return null;
 
   // Easy: 40% chance of random move
   if (difficulty === 'easy' && Math.random() < 0.4) {
-    return moves[Math.floor(Math.random() * moves.length)];
+    return outcomes[Math.floor(Math.random() * outcomes.length)].firstMove;
   }
 
   const depth = DIFFICULTY_DEPTH[difficulty];
   let bestMove: Move | null = null;
   let bestScore = -Infinity;
 
-  for (const move of moves) {
-    const cloned = cloneBoard(board);
-    const piece = cloned[move.fromRow][move.fromCol].piece!;
-    applyMove(move, cloned, piece, size);
-    const score = minimax(cloned, depth - 1, -Infinity, Infinity, false, aiColor, size);
+  for (const outcome of outcomes) {
+    const score = minimax(outcome.finalBoard, depth - 1, -Infinity, Infinity, false, aiColor, size, rules);
     if (score > bestScore) {
       bestScore = score;
-      bestMove = move;
+      bestMove = outcome.firstMove;
     }
   }
 
