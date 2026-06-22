@@ -1,5 +1,5 @@
 import { AIDifficulty, BoardSize, Cell, GameRules, Move, Piece, PlayerColor } from '../models/types';
-import { getAllValidMoves, getValidMovesForPiece, applyMove, shouldPromote } from './moveValidator';
+import { getAllValidMoves, getValidMovesForPiece, applyMove } from './moveValidator';
 import { cloneBoard } from './boardFactory';
 
 // ============================================================
@@ -49,11 +49,11 @@ interface MoveOutcome {
 
 // Expand a capture chain to completion, returning all possible final boards.
 // This handles multi-jump sequences so the AI evaluates complete moves, not partial ones.
-function expandChain(piece: Piece, board: Cell[][], size: BoardSize, rules: GameRules): Cell[][] {
+function expandChain(piece: Piece, board: Cell[][], size: BoardSize, rules: GameRules): Cell[][][] {
   const chainMoves = getValidMovesForPiece(piece, board, size, true, rules);
   if (chainMoves.length === 0) return [board];
 
-  const results: Cell[][] = [];
+  const results: Cell[][][] = [];
   for (const move of chainMoves) {
     const cloned = cloneBoard(board);
     const p = cloned[move.fromRow][move.fromCol].piece!;

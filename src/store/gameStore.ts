@@ -254,13 +254,18 @@ export const useGameStore = create<GameStore>()(
         if (
           updatedGame.status === 'playing' &&
           updatedGame.gameMode === 'ai' &&
-          updatedGame.currentTurn === 'black' &&
-          !captureChain
+          updatedGame.currentTurn === 'black'
         ) {
           setTimeout(() => {
             const state = get().game;
-            const aiMove = getBestMove(state.board, 'black', state.aiDifficulty, state.boardSize, state.rules);
-            if (aiMove) get().makeMove(aiMove);
+            if (state.captureChain) {
+              // Continue the mandatory capture chain
+              const chainMove = state.validMoves[0];
+              if (chainMove) get().makeMove(chainMove);
+            } else {
+              const aiMove = getBestMove(state.board, 'black', state.aiDifficulty, state.boardSize, state.rules);
+              if (aiMove) get().makeMove(aiMove);
+            }
           }, 400);
         }
       },
