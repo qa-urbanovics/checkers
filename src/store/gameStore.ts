@@ -5,7 +5,7 @@ import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 import { detectLanguage } from '../i18n';
 import {
   GameState, GameMode, AIDifficulty, BoardSize, PlayerColor,
-  Piece, Move, Screen, AppSettings, PlayerStats, GameStatus
+  Piece, Move, Screen, AppSettings, PlayerStats, GameStatus, GameSnapshot
 } from '../models/types';
 import { createEmptyBoard, setupInitialPieces } from '../engine/boardFactory';
 import { getAllValidMoves, getValidMovesForPiece, shouldPromote } from '../engine/moveValidator';
@@ -88,6 +88,7 @@ function createInitialGameState(
     redPiecesCount: boardSize === 8 ? 12 : 20,
     blackPiecesCount: boardSize === 8 ? 12 : 20,
     turnCount: 0,
+    stateHistory: [],
   };
 }
 
@@ -143,6 +144,20 @@ export const useGameStore = create<GameStore>()(
 
         const piece = game.board[move.fromRow][move.fromCol].piece;
         if (!piece) return;
+
+        // Save snapshot for undo at the start of each fresh turn (not mid-chain)
+        let stateHistory = game.stateHistory;
+        if (game.captureChain === null) {
+          const snap: GameSnapshot = {
+            board: game.board.map(row => row.map(cell => ({ ...cell, piece: cell.piece ? { ...cell.piece } : null }))),
+            pieces: new Map(Array.from(game.pieces.entries()).map(([k, v]) => [k, { ...v }])),
+            currentTurn: game.currentTurn,
+            redPiecesCount: game.redPiecesCount,
+            blackPiecesCount: game.blackPiecesCount,
+            turnCount: game.turnCount,
+          };
+          stateHistory = [...stateHistory, snap].slice(-30);
+        }
 
         // Clone board and apply move
         const newBoard = game.board.map(row => row.map(cell => ({
@@ -246,6 +261,7 @@ export const useGameStore = create<GameStore>()(
             redPiecesCount: redCount,
             blackPiecesCount: blackCount,
             turnCount: game.turnCount + 1,
+            stateHistory,
           }
         });
 
@@ -271,10 +287,33 @@ export const useGameStore = create<GameStore>()(
       },
 
       undoMove: () => {
-        // Restart game from beginning and replay minus last 2 moves (1 full round)
         const { game } = get();
-        if (game.moveHistory.length < 2) return;
-        // TODO: implement proper undo with board snapshots
+        const history = game.stateHistory;
+        // In AI mode: undo 2 snapshots (AI response + player move)
+        // In PvP: undo 1 snapshot
+        const stepsBack = game.gameMode === 'ai' ? 2 : 1;
+        if (history.length < 1) return;
+        const targetIdx = Math.max(0, history.length - stepsBack);
+        const snap = history[targetIdx];
+        if (!snap) return;
+        set({
+          game: {
+            ...game,
+            board: snap.board,
+            pieces: snap.pieces,
+            currentTurn: snap.currentTurn,
+            redPiecesCount: snap.redPiecesCount,
+            blackPiecesCount: snap.blackPiecesCount,
+            turnCount: snap.turnCount,
+            selectedPiece: null,
+            validMoves: getAllValidMoves(snap.currentTurn, snap.board, game.boardSize, game.rules),
+            captureChain: null,
+            status: 'playing',
+            winner: null,
+            moveHistory: game.moveHistory.slice(0, -stepsBack),
+            stateHistory: history.slice(0, targetIdx),
+          }
+        });
       },
 
       resetGame: () => {

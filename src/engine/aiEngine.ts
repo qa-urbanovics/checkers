@@ -9,7 +9,7 @@ import { cloneBoard } from './boardFactory';
 const DIFFICULTY_DEPTH: Record<AIDifficulty, number> = {
   easy: 1,
   medium: 3,
-  hard: 6,
+  hard: 7,
 };
 
 function evaluate(board: Cell[][], size: BoardSize): number {
@@ -24,17 +24,28 @@ function evaluate(board: Cell[][], size: BoardSize): number {
       const isRed = piece.color === 'red';
       const mul = isRed ? 1 : -1;
 
-      score += mul * (piece.type === 'king' ? 350 : 100);
+      // Piece value: king worth significantly more
+      score += mul * (piece.type === 'king' ? 420 : 100);
 
+      // Center control
       const distToCenter = Math.abs(r - center) + Math.abs(c - center);
       score += mul * (size - distToCenter) * 2;
 
       if (piece.type === 'man') {
+        // Advancement bonus — closer to promotion
         const advancement = isRed ? size - 1 - r : r;
-        score += mul * advancement * 3;
+        score += mul * advancement * 5;
+
+        // Back row defense: keep at least some pieces protecting home row
+        const backRow = isRed ? size - 1 : 0;
+        if (r === backRow) score += mul * 14;
+      } else {
+        // King mobility bonus: kings on non-edge squares are more effective
+        if (c > 0 && c < size - 1 && r > 0 && r < size - 1) score += mul * 10;
       }
 
-      if (c === 0 || c === size - 1) score -= mul * 5;
+      // Edge penalty — edge pieces are less mobile
+      if (c === 0 || c === size - 1) score -= mul * 9;
     }
   }
 
@@ -157,8 +168,8 @@ export function getBestMove(
   const outcomes = getAIMoves(aiColor, board, size, rules);
   if (outcomes.length === 0) return null;
 
-  // Easy: 40% chance of random move
-  if (difficulty === 'easy' && Math.random() < 0.4) {
+  // Easy: 65% random move — clearly weaker than medium
+  if (difficulty === 'easy' && Math.random() < 0.65) {
     return outcomes[Math.floor(Math.random() * outcomes.length)].firstMove;
   }
 

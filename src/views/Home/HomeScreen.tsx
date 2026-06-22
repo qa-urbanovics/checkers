@@ -112,6 +112,9 @@ export function HomeScreen() {
         <button className="btn-ghost" onClick={() => setScreen('stats')}>
           {t('statistics')}
         </button>
+        <button className="btn-ghost" onClick={() => setScreen('rules')}>
+          {t('rules')}
+        </button>
         <button className="btn-ghost" onClick={() => setScreen('settings')}>
           {t('settings')}
         </button>

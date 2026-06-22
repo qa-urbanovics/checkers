@@ -16,7 +16,7 @@ export type GameRules = 'russian' | 'international';
 
 export type GameStatus = 'idle' | 'playing' | 'paused' | 'finished';
 
-export type Screen = 'home' | 'mode-select' | 'board-select' | 'difficulty-select' | 'game' | 'settings' | 'stats';
+export type Screen = 'home' | 'mode-select' | 'board-select' | 'difficulty-select' | 'game' | 'settings' | 'stats' | 'rules';
 
 // A piece on the board
 export interface Piece {
@@ -45,6 +45,16 @@ export interface Cell {
   piece: Piece | null;
 }
 
+// Snapshot for undo
+export interface GameSnapshot {
+  board: Cell[][];
+  pieces: Map<string, Piece>;
+  currentTurn: PlayerColor;
+  redPiecesCount: number;
+  blackPiecesCount: number;
+  turnCount: number;
+}
+
 // Full game state
 export interface GameState {
   board: Cell[][];
@@ -63,6 +73,7 @@ export interface GameState {
   redPiecesCount: number;
   blackPiecesCount: number;
   turnCount: number;
+  stateHistory: GameSnapshot[];
 }
 
 // Player stats (persisted)

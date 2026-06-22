@@ -77,6 +77,9 @@ const T = {
     marbleBoard: 'Marble',
     languageLabel: 'Language',
     pvpWins: '1 vs 1 wins',
+    undo: 'Undo',
+    rules: 'Rules',
+    rulesTitle: 'How to Play',
   },
   ru: {
     back: '← Назад',
@@ -154,6 +157,9 @@ const T = {
     marbleBoard: 'Мрамор',
     languageLabel: 'Язык',
     pvpWins: 'Победы 1 vs 1',
+    undo: 'Отмена',
+    rules: 'Правила',
+    rulesTitle: 'Как играть',
   },
   es: {
     back: '← Atrás',
@@ -231,6 +237,9 @@ const T = {
     marbleBoard: 'Mármol',
     languageLabel: 'Idioma',
     pvpWins: 'Victorias 1 vs 1',
+    undo: 'Deshacer',
+    rules: 'Reglas',
+    rulesTitle: 'Cómo jugar',
   },
 } as const;
 

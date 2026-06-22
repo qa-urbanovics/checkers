@@ -2,7 +2,7 @@ import { useGameStore } from '../../store/gameStore';
 import { useT } from '../../i18n';
 
 export function GameHUD() {
-  const { game, setScreen, resetGame, settings } = useGameStore();
+  const { game, setScreen, resetGame, undoMove, settings } = useGameStore();
   const { currentTurn, status, winner, gameMode, aiDifficulty, redPiecesCount, blackPiecesCount, boardSize } = game;
   const t = useT();
 
@@ -10,6 +10,8 @@ export function GameHUD() {
   const isClassic = settings.pieceTheme === 'classic';
 
   const diffShort = { easy: t('easyShort'), medium: t('mediumShort'), hard: t('hardShort') };
+
+  const canUndo = game.stateHistory.length >= (isAI ? 2 : 1) && status !== 'finished';
 
   const statusText = () => {
     if (status === 'finished') {
@@ -27,13 +29,10 @@ export function GameHUD() {
     ? (winner === 'red' ? '#C9A84C' : '#E05A5A')
     : currentTurn === 'red' ? '#E05A5A' : '#90B8A0';
 
-  const p1Gradient = isClassic
-    ? 'radial-gradient(circle at 35% 30%, #FFFFFF, #D8D0C8 50%, #A09880)'
-    : 'radial-gradient(circle at 35% 30%, #FF7070, #C62828 50%, #7B0000)';
-
-  const p2Gradient = isClassic
-    ? 'radial-gradient(circle at 35% 30%, #484848, #1C1C1C 50%, #050505)'
-    : 'radial-gradient(circle at 35% 30%, #8AB89A, #2A5A3A 50%, #0D2018)';
+  const p1Bg = isClassic ? '#EEEAE4' : '#C83232';
+  const p1Border = isClassic ? 'rgba(150,120,80,0.28)' : 'rgba(255,170,170,0.22)';
+  const p2Bg = isClassic ? '#1E1E1E' : '#1E6638';
+  const p2Border = isClassic ? 'rgba(255,255,255,0.09)' : 'rgba(100,210,140,0.22)';
 
   return (
     <div style={{ padding: '10px 14px 10px' }}>
@@ -46,9 +45,23 @@ export function GameHUD() {
             {boardSize}×{boardSize} · {isAI ? `${t('ai')} ${diffShort[aiDifficulty]}` : '1 vs 1'}
           </div>
         </div>
-        <button onClick={resetGame} style={navBtnStyle('#6A8A70', 'rgba(255,255,255,0.05)', 'rgba(255,255,255,0.09)')}>
-          {t('restart')}
-        </button>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <button
+            onClick={undoMove}
+            disabled={!canUndo}
+            style={navBtnStyle(
+              canUndo ? '#C9A84C' : '#3A4A38',
+              'rgba(255,255,255,0.04)',
+              canUndo ? 'rgba(201,168,76,0.2)' : 'rgba(255,255,255,0.05)'
+            )}
+            title={t('undo')}
+          >
+            ↩
+          </button>
+          <button onClick={resetGame} style={navBtnStyle('#6A8A70', 'rgba(255,255,255,0.05)', 'rgba(255,255,255,0.09)')}>
+            ↺
+          </button>
+        </div>
       </div>
 
       <div style={{
@@ -59,7 +72,7 @@ export function GameHUD() {
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
             width: 36, height: 36, borderRadius: '50%',
-            background: p1Gradient,
+            background: p1Bg, border: `2px solid ${p1Border}`,
             boxShadow: currentTurn === 'red' && status === 'playing'
               ? '0 0 0 2.5px #5ECC86, 0 0 14px rgba(94,204,134,0.5)'
               : '0 3px 10px rgba(0,0,0,0.4)',
@@ -97,7 +110,7 @@ export function GameHUD() {
           </div>
           <div style={{
             width: 36, height: 36, borderRadius: '50%',
-            background: p2Gradient,
+            background: p2Bg, border: `2px solid ${p2Border}`,
             boxShadow: currentTurn === 'black' && status === 'playing'
               ? '0 0 0 2.5px #5ECC86, 0 0 14px rgba(94,204,134,0.4)'
               : '0 3px 10px rgba(0,0,0,0.6)',

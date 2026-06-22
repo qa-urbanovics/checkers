@@ -9,6 +9,7 @@ import { DifficultyScreen } from './views/Home/DifficultyScreen';
 import { GameScreen } from './views/Game/GameScreen';
 import { SettingsScreen } from './views/Settings/SettingsScreen';
 import { StatsScreen } from './views/Stats/StatsScreen';
+import { RulesScreen } from './views/Rules/RulesScreen';
 import './App.css';
 
 // ─────────────────────────────────────────────
@@ -59,6 +60,7 @@ function App() {
       case 'game':              return <GameScreen />;
       case 'settings':          return <SettingsScreen />;
       case 'stats':             return <StatsScreen />;
+      case 'rules':             return <RulesScreen />;
       default:                  return <HomeScreen />;
     }
   };
