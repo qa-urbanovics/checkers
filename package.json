@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "cap:sync": "npm run build && npx cap sync",
-    "cap:ios": "npm run build && npx cap sync ios && npx cap open ios"
+    "cap:ios": "npm run build && npx cap sync ios && npx cap open ios",
+    "deploy:web": "tsc -b && BUILD_TARGET=web vite build"
   },
   "dependencies": {
     "@capacitor/cli": "^7.6.7",
