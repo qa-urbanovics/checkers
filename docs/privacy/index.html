@@ -5,554 +5,774 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Privacy Policy — Checkers: Emerald Courts</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #050B06;
-      --emerald: #5ECC86;
-      --gold: #C9A84C;
-      --text: #C0D8C4;
-      --muted: #4A6A50;
-      --surface: rgba(255,255,255,0.035);
-      --border: rgba(255,255,255,0.07);
+      --bg:        #060C07;
+      --bg2:       #0A1209;
+      --em:        #5ECC86;
+      --em-dim:    rgba(94,204,134,0.12);
+      --em-line:   rgba(94,204,134,0.18);
+      --gold:      #C9A84C;
+      --text:      #D4EAD8;
+      --muted:     #3D5E43;
+      --faint:     #1A2E1C;
+      --border:    rgba(255,255,255,0.065);
+      --r:         20px;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Inter', -apple-system, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg);
       color: var(--text);
-      line-height: 1.75;
+      line-height: 1.7;
       -webkit-font-smoothing: antialiased;
-      min-height: 100vh;
     }
 
-    /* ── Header ── */
-    header {
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 32px;
       position: relative;
       overflow: hidden;
-      padding: 72px 24px 56px;
-      text-align: center;
-      border-bottom: 1px solid var(--border);
     }
 
-    header::before {
-      content: '';
+    .hero-glow {
+      position: absolute;
+      top: -200px; left: 50%;
+      transform: translateX(-50%);
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, rgba(94,204,134,0.09) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse at 50% -10%, rgba(94,204,134,0.18) 0%, transparent 65%);
+      background-image:
+        linear-gradient(rgba(94,204,134,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(94,204,134,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at 50% 40%, black 20%, transparent 70%);
       pointer-events: none;
     }
 
-    .board-bg {
-      position: absolute;
-      top: -30px; right: -40px;
-      opacity: 0.04;
-      display: grid;
-      grid-template-columns: repeat(7, 36px);
-      transform: rotate(12deg);
-      pointer-events: none;
-    }
-    .board-bg span {
-      width: 36px; height: 36px;
-      display: block;
-    }
-    .board-bg span.dark  { background: #5ECC86; }
-    .board-bg span.light { background: transparent; }
-
-    .logo-wrap {
+    .app-icon {
+      width: 110px;
+      height: 110px;
+      border-radius: 26px;
+      margin-bottom: 32px;
       position: relative;
-      display: inline-block;
-      margin-bottom: 28px;
-    }
-    .logo-wrap img {
-      width: 96px;
-      height: 96px;
-      border-radius: 22px;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.6), 0 0 0 1px rgba(94,204,134,0.15);
-    }
-    .logo-wrap::after {
-      content: '';
-      position: absolute;
-      inset: -8px;
-      border-radius: 28px;
-      border: 1px solid rgba(94,204,134,0.12);
-      pointer-events: none;
+      z-index: 1;
+      box-shadow:
+        0 0 0 1px rgba(94,204,134,0.15),
+        0 20px 60px rgba(0,0,0,0.7),
+        0 0 80px rgba(94,204,134,0.08);
     }
 
-    header h1 {
+    .hero h1 {
       font-family: 'Playfair Display', Georgia, serif;
-      font-size: clamp(28px, 5vw, 38px);
-      font-weight: 700;
-      background: linear-gradient(135deg, #fff 0%, #B8D4BC 50%, #5ECC86 100%);
+      font-size: clamp(32px, 6vw, 52px);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(150deg, #fff 0%, #c8e0cc 45%, #5ECC86 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      position: relative; z-index: 1;
     }
 
-    .tagline {
-      font-size: 14px;
-      color: var(--muted);
-      font-weight: 500;
-      letter-spacing: 0.06em;
+    .hero-sub {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
+      color: var(--muted);
+      position: relative; z-index: 1;
     }
 
-    /* ── Lang switch ── */
-    .lang-bar {
+    .hero-date {
+      margin-top: 24px;
+      font-size: 13px;
+      color: var(--faint);
+      font-weight: 500;
+      position: relative; z-index: 1;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--faint);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: float 2.4s ease-in-out infinite;
+    }
+    .scroll-hint svg { opacity: 0.4; }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(6px); }
+    }
+
+    /* ─── LANG ─── */
+    .lang-row {
       display: flex;
       justify-content: center;
-      gap: 8px;
-      padding: 24px 24px 0;
+      gap: 6px;
+      padding: 40px 24px 0;
     }
     .lang-btn {
-      padding: 7px 22px;
+      padding: 8px 20px;
       border-radius: 10px;
       border: 1px solid var(--border);
-      background: var(--surface);
+      background: transparent;
       color: var(--muted);
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
       font-family: inherit;
-      transition: all 0.15s;
+      letter-spacing: 0.02em;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
     }
     .lang-btn.active {
-      background: rgba(94,204,134,0.1);
-      border-color: rgba(94,204,134,0.35);
-      color: var(--emerald);
+      background: var(--em-dim);
+      border-color: var(--em-line);
+      color: var(--em);
     }
 
-    /* ── Main ── */
-    main {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 48px 24px 96px;
-    }
-
+    /* ─── CONTENT ─── */
     .content { display: none; }
     .content.active { display: block; }
 
-    /* ── Opener ── */
-    .opener {
-      margin-bottom: 48px;
+    /* ─── OPENING STATEMENT ─── */
+    .statement {
+      max-width: 680px;
+      margin: 64px auto 0;
+      padding: 0 32px;
     }
-    .opener .date {
-      font-size: 12px;
-      color: var(--muted);
+
+    .statement-inner {
+      border-left: 2px solid var(--em-line);
+      padding-left: 28px;
+    }
+
+    .statement p {
+      font-size: clamp(16px, 2.5vw, 19px);
+      font-weight: 300;
+      color: #8AAE90;
+      line-height: 1.85;
+    }
+    .statement p + p { margin-top: 16px; }
+    .statement strong {
       font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 20px;
+      color: #B8D8BC;
     }
-    .opener p {
-      font-size: 17px;
-      color: #A0C8A8;
-      line-height: 1.8;
-    }
-    .opener p + p { margin-top: 14px; }
-    .opener strong { color: #D0E8D4; font-weight: 600; }
-
-    /* ── Divider ── */
-    .divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--border) 30%, var(--border) 70%, transparent);
-      margin: 40px 0;
+    .statement em {
+      font-style: italic;
+      color: var(--em);
     }
 
-    /* ── Section ── */
-    .block {
-      margin-bottom: 36px;
-    }
-
-    .block-header {
-      display: flex;
-      align-items: center;
+    /* ─── BIG BADGE ─── */
+    .badge-row {
+      max-width: 680px;
+      margin: 56px auto 0;
+      padding: 0 32px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 12px;
-      margin-bottom: 14px;
+    }
+    @media (max-width: 520px) { .badge-row { grid-template-columns: 1fr; } }
+
+    .badge {
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 24px 20px;
+      text-align: center;
+      background: linear-gradient(160deg, rgba(255,255,255,0.025), transparent);
+    }
+    .badge-icon { font-size: 28px; margin-bottom: 10px; }
+    .badge-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      line-height: 1.4;
     }
 
-    .block-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      background: rgba(94,204,134,0.08);
-      border: 1px solid rgba(94,204,134,0.14);
+    /* ─── SECTIONS ─── */
+    .sections {
+      max-width: 680px;
+      margin: 64px auto 0;
+      padding: 0 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .sec {
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+      background: linear-gradient(160deg, rgba(255,255,255,0.02), transparent);
+      transition: border-color 0.2s;
+    }
+    .sec:hover { border-color: rgba(94,204,134,0.15); }
+
+    .sec-head {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 18px;
+      gap: 16px;
+      padding: 22px 26px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .sec-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--faint);
+      letter-spacing: 0.06em;
+      width: 22px;
       flex-shrink: 0;
     }
 
-    .block h2 {
-      font-size: 17px;
-      font-weight: 700;
-      color: #E0EDE1;
-    }
-
-    .block p {
+    .sec-title {
+      flex: 1;
       font-size: 15px;
-      color: #7A9A80;
-      line-height: 1.75;
+      font-weight: 600;
+      color: #C0D8C4;
     }
-    .block p + p { margin-top: 10px; }
 
-    /* ── Highlight card ── */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px 22px;
+    .sec-arrow {
+      color: var(--muted);
+      font-size: 18px;
+      transition: transform 0.25s ease;
+    }
+    .sec.open .sec-arrow { transform: rotate(90deg); }
+
+    .sec-body {
+      display: none;
+      padding: 0 26px 24px 64px;
+    }
+    .sec.open .sec-body { display: block; }
+
+    .sec-body p {
+      font-size: 14px;
+      color: #5A7A60;
+      line-height: 1.8;
+    }
+    .sec-body p + p { margin-top: 10px; }
+
+    .pill {
+      display: inline-block;
+      background: var(--em-dim);
+      border: 1px solid var(--em-line);
+      border-radius: 8px;
+      padding: 2px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--em);
       margin-top: 12px;
     }
-    .card p {
-      font-size: 14px;
-      color: #6A8A70;
+
+    /* ─── CONTACT ─── */
+    .contact {
+      max-width: 680px;
+      margin: 56px auto 0;
+      padding: 0 32px;
     }
 
-    .card-green {
-      background: rgba(94,204,134,0.05);
-      border-color: rgba(94,204,134,0.15);
-    }
-    .card-green p { color: #7AB890; }
-
-    /* ── Contact ── */
-    .contact-block {
-      background: var(--surface);
+    .contact-inner {
+      background: var(--bg2);
       border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 28px 24px;
-      text-align: center;
-      margin-top: 40px;
-    }
-    .contact-block p {
-      font-size: 15px;
-      color: var(--muted);
-      margin-bottom: 12px;
-    }
-    .contact-block a {
-      display: inline-block;
-      color: var(--emerald);
-      font-weight: 600;
-      font-size: 16px;
-      text-decoration: none;
-      padding: 10px 24px;
-      border-radius: 12px;
-      border: 1px solid rgba(94,204,134,0.25);
-      background: rgba(94,204,134,0.06);
-      transition: all 0.15s;
-    }
-    .contact-block a:hover {
-      background: rgba(94,204,134,0.12);
-      border-color: rgba(94,204,134,0.4);
+      border-radius: 24px;
+      padding: 40px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
     }
 
-    /* ── Footer ── */
-    footer {
-      text-align: center;
-      padding: 28px 24px;
-      border-top: 1px solid var(--border);
-      font-size: 13px;
-      color: #1E3A22;
+    .contact-left h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #D0E8D4;
+      margin-bottom: 6px;
     }
+    .contact-left p {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .contact-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--em-dim);
+      border: 1px solid var(--em-line);
+      border-radius: 14px;
+      padding: 14px 24px;
+      color: var(--em);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      font-family: inherit;
+      white-space: nowrap;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .contact-btn:hover {
+      background: rgba(94,204,134,0.18);
+      border-color: rgba(94,204,134,0.35);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      max-width: 680px;
+      margin: 64px auto 0;
+      padding: 32px 32px 64px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    footer p { font-size: 12px; color: var(--faint); }
+    footer a { color: var(--muted); text-decoration: none; font-size: 12px; }
+    footer a:hover { color: var(--em); }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="board-bg" aria-hidden="true">
-      <!-- 7×6 checkerboard pattern -->
+<!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-grid"></div>
+  <img class="app-icon" src="../icons/ios/Icon-1024.png" alt="Checkers: Emerald Courts" />
+  <h1>Checkers: Emerald Courts</h1>
+  <p class="hero-sub">Privacy Policy</p>
+  <p class="hero-date">Last updated: June 2026</p>
+  <div class="scroll-hint">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    scroll
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ LANG ═══════════════════════════════ -->
+<div class="lang-row">
+  <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+  <button class="lang-btn" onclick="setLang('ru',this)">RU</button>
+  <button class="lang-btn" onclick="setLang('es',this)">ES</button>
+</div>
+
+<!-- ═══════════════════════════════ EN ════════════════════════════════ -->
+<div class="content active" id="content-en">
+
+  <div class="statement">
+    <div class="statement-inner">
+      <p>I made this app alone, as a side project. It's a checkers game — no accounts, no cloud, no backend. This page exists because Apple requires it. <strong>The actual policy fits in one sentence:</strong></p>
+      <p><em>This app doesn't collect, store, or transmit any personal data.</em></p>
+      <p>Everything below is just the expanded legal version of that sentence.</p>
     </div>
-
-    <div class="logo-wrap">
-      <img src="../icons/ios/Icon-1024.png" alt="Checkers: Emerald Courts" />
-    </div>
-
-    <h1>Checkers: Emerald Courts</h1>
-    <p class="tagline">Privacy Policy</p>
-  </header>
-
-  <div class="lang-bar">
-    <button class="lang-btn active" onclick="setLang('en', this)">English</button>
-    <button class="lang-btn" onclick="setLang('ru', this)">Русский</button>
   </div>
 
-  <main>
+  <div class="badge-row">
+    <div class="badge">
+      <div class="badge-icon">📵</div>
+      <div class="badge-label">No Internet Required</div>
+    </div>
+    <div class="badge">
+      <div class="badge-icon">🚫</div>
+      <div class="badge-label">Zero Data Collected</div>
+    </div>
+    <div class="badge">
+      <div class="badge-icon">🔒</div>
+      <div class="badge-label">Local Storage Only</div>
+    </div>
+  </div>
 
-    <!-- ══════════ ENGLISH ══════════ -->
-    <div class="content active" id="content-en">
+  <div class="sections">
 
-      <div class="opener">
-        <div class="date">June 2026</div>
-        <p>
-          I built Checkers: Emerald Courts as a solo project — a clean, offline game
-          with no backend, no accounts, and no nonsense. This page explains how
-          the app handles your data. Spoiler: <strong>it doesn't collect any.</strong>
-        </p>
-        <p>
-          I'm not a big company with a legal team. I'm a developer who wanted
-          to make a good checkers game. This privacy policy is short because
-          there's genuinely nothing to report.
-        </p>
+    <div class="sec open">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">01</span>
+        <span class="sec-title">What the app stores</span>
+        <span class="sec-arrow">›</span>
       </div>
-
-      <div class="divider"></div>
-
-      <div class="block">
-        <div class="block-header">
-          <div class="block-icon">🔒</div>
-          <h2>What the app stores</h2>
-        </div>
-        <p>
-          The app saves two things to your device — your settings (board theme,
-          piece style, language, sound) and your game stats (wins, losses, total games).
-          That's it. Both live in your phone's local storage and never go anywhere else.
-        </p>
-        <div class="card card-green">
-          <p>Nothing is sent to a server. There is no server. The app works 100% offline.</p>
-        </div>
+      <div class="sec-body">
+        <p>The app saves two things to your device's local storage: your preferences (board theme, piece style, sound, language) and your game statistics (wins, losses, total games). These never leave your device.</p>
+        <p>You can delete this data at any time by uninstalling the app. You can also reset statistics from within the app: Settings → Statistics → Reset.</p>
+        <span class="pill">Local only · Never transmitted</span>
       </div>
-
-      <div class="block">
-        <div class="block-header">
-          <div class="block-icon">📡</div>
-          <h2>No tracking, no analytics</h2>
-        </div>
-        <p>
-          There are no analytics SDKs, no crash reporters, no ad networks, and no
-          third-party trackers of any kind in this app. I don't know how many people
-          play it, how long sessions last, or anything else. I didn't build any of that.
-        </p>
-      </div>
-
-      <div class="block">
-        <div class="block-header">
-          <div class="block-icon">👤</div>
-          <h2>No account required</h2>
-        </div>
-        <p>
-          You don't sign up for anything. There's no login, no profile, no cloud sync.
-          Open the app, play a game, close it. No data about you exists anywhere outside your device.
-        </p>
-      </div>
-
-      <div class="block">
-        <div class="block-header">
-          <div class="block-icon">👶</div>
-          <h2>Safe for everyone</h2>
-        </div>
-        <p>
-          The app is rated 4+. Since nothing is collected at all, it's safe for players
-          of any age. There's nothing to misuse.
-        </p>
-      </div>
-
-      <div class="block">
-        <div class="block-header">
-          <div class="block-icon">🗑️</div>
-          <h2>Deleting your data</h2>
-        </div>
-        <p>
-          To wipe everything — uninstall the app. That removes the local storage.
-          You can also reset your stats inside Settings → Statistics → Reset.
-        </p>
-      </div>
-
-      <div class="block">
-        <div class="block-header">
-          <div class="block-icon">📝</div>
-          <h2>Updates to this page</h2>
-        </div>
-        <p>
-          If I ever add something that changes how data is handled, I'll update this page
-          and bump the date at the top. Given the app is fully offline, that's unlikely.
-        </p>
-      </div>
-
-      <div class="block">
-        <div class="block-header">
-          <div class="block-icon">🌍</div>
-          <h2>GDPR &amp; international users</h2>
-        </div>
-        <p>
-          Since the app collects no personal data whatsoever, there is nothing to
-          process, store, transfer, or delete under GDPR, CCPA, or any other
-          privacy regulation. You have full control — your settings live on your
-          device and can be erased by uninstalling the app.
-        </p>
-      </div>
-
-      <div class="block">
-        <div class="block-header">
-          <div class="block-icon">⚖️</div>
-          <h2>Limitation of liability</h2>
-        </div>
-        <p>
-          The app is provided "as is" without warranties of any kind. I'm not
-          liable for any damages arising from its use. It's a checkers game —
-          the worst thing that can happen is you lose a match.
-        </p>
-        <p>
-          This policy is governed by the laws of the Republic of Latvia,
-          where the developer is based, without regard to conflict of law principles.
-        </p>
-      </div>
-
-      <div class="contact-block">
-        <p>Questions? I actually read my email.</p>
-        <a href="mailto:urbanovich.urbanovich@gmail.com">urbanovich.urbanovich@gmail.com</a>
-      </div>
-
     </div>
 
-    <!-- ══════════ RUSSIAN ══════════ -->
-    <div class="content" id="content-ru">
-
-      <div class="opener">
-        <div class="date">Июнь 2026</div>
-        <p>
-          Checkers: Emerald Courts — это мой личный проект. Офлайн-игра без
-          сервера, без аккаунтов и без лишнего. Эта страница объясняет,
-          что происходит с твоими данными. Спойлер: <strong>ничего не собирается.</strong>
-        </p>
-        <p>
-          Я не большая компания с юридическим отделом. Я разработчик,
-          который хотел сделать хорошие шашки. Политика конфиденциальности
-          короткая, потому что описывать реально нечего.
-        </p>
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">02</span>
+        <span class="sec-title">No tracking or analytics</span>
+        <span class="sec-arrow">›</span>
       </div>
-
-      <div class="divider"></div>
-
-      <div class="block">
-        <div class="block-header">
-          <div class="block-icon">🔒</div>
-          <h2>Что хранит приложение</h2>
-        </div>
-        <p>
-          Приложение сохраняет две вещи локально на твоём устройстве — настройки
-          (тема доски, стиль шашек, язык, звук) и игровую статистику (победы,
-          поражения, количество игр). Всё. Эти данные никуда не отправляются.
-        </p>
-        <div class="card card-green">
-          <p>Никаких запросов к серверу. Сервера нет. Приложение работает полностью офлайн.</p>
-        </div>
+      <div class="sec-body">
+        <p>There are no analytics tools, crash reporters, ad networks, or third-party tracking SDKs in this app. I have no visibility into how it's used, how long sessions last, or anything about the people who play it.</p>
       </div>
-
-      <div class="block">
-        <div class="block-header">
-          <div class="block-icon">📡</div>
-          <h2>Нет трекинга, нет аналитики</h2>
-        </div>
-        <p>
-          В приложении нет SDK аналитики, нет сборщиков ошибок, нет рекламных
-          сетей и никаких сторонних трекеров. Я не знаю, сколько людей играет,
-          как долго длятся сессии — ничего этого нет.
-        </p>
-      </div>
-
-      <div class="block">
-        <div class="block-header">
-          <div class="block-icon">👤</div>
-          <h2>Без регистрации</h2>
-        </div>
-        <p>
-          Не нужно ни на что подписываться. Нет логина, профиля, облачной
-          синхронизации. Открыл — сыграл — закрыл. Никакой информации о тебе
-          нигде не существует, кроме твоего устройства.
-        </p>
-      </div>
-
-      <div class="block">
-        <div class="block-header">
-          <div class="block-icon">👶</div>
-          <h2>Безопасно для всех</h2>
-        </div>
-        <p>
-          Рейтинг приложения — 4+. Поскольку никакие данные не собираются вообще,
-          приложение безопасно для игроков любого возраста.
-        </p>
-      </div>
-
-      <div class="block">
-        <div class="block-header">
-          <div class="block-icon">🗑️</div>
-          <h2>Удаление данных</h2>
-        </div>
-        <p>
-          Чтобы удалить всё — удали приложение. Вместе с ним удалится и локальное
-          хранилище. Статистику также можно сбросить внутри приложения:
-          Статистика → Сбросить статистику.
-        </p>
-      </div>
-
-      <div class="block">
-        <div class="block-header">
-          <div class="block-icon">📝</div>
-          <h2>Обновления</h2>
-        </div>
-        <p>
-          Если что-то поменяется — обновлю страницу и дату вверху. Учитывая,
-          что приложение полностью офлайн, это маловероятно.
-        </p>
-      </div>
-
-      <div class="block">
-        <div class="block-header">
-          <div class="block-icon">🌍</div>
-          <h2>GDPR и международные пользователи</h2>
-        </div>
-        <p>
-          Поскольку приложение не собирает никаких персональных данных,
-          никакой обработки, хранения или передачи данных не происходит —
-          ни по GDPR, ни по любому другому законодательству о защите данных.
-          Твои настройки хранятся на устройстве и удаляются вместе с приложением.
-        </p>
-      </div>
-
-      <div class="block">
-        <div class="block-header">
-          <div class="block-icon">⚖️</div>
-          <h2>Ограничение ответственности</h2>
-        </div>
-        <p>
-          Приложение предоставляется «как есть», без каких-либо гарантий.
-          Разработчик не несёт ответственности за любой ущерб, возникший
-          в результате использования приложения. Это игра в шашки —
-          самое страшное, что может случиться, — ты проиграешь партию.
-        </p>
-        <p>
-          Настоящая политика регулируется законодательством Республики Латвия,
-          по месту нахождения разработчика.
-        </p>
-      </div>
-
-      <div class="contact-block">
-        <p>Есть вопросы? Я читаю почту.</p>
-        <a href="mailto:urbanovich.urbanovich@gmail.com">urbanovich.urbanovich@gmail.com</a>
-      </div>
-
     </div>
 
-  </main>
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">03</span>
+        <span class="sec-title">No account, no cloud</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>There is no sign-up, no login, no user profile, and no cloud sync. Nothing about you exists anywhere outside your own device.</p>
+      </div>
+    </div>
 
-  <footer>
-    © 2026 Checkers: Emerald Courts
-  </footer>
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">04</span>
+        <span class="sec-title">Children's privacy (COPPA)</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>The app is rated 4+ and is safe for users of all ages. Since no data is collected from anyone, it is fully compliant with COPPA and similar children's privacy regulations by design.</p>
+      </div>
+    </div>
 
-  <script>
-    function setLang(lang, btn) {
-      document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.lang-btn').forEach(el => el.classList.remove('active'));
-      document.getElementById('content-' + lang).classList.add('active');
-      btn.classList.add('active');
-    }
-  </script>
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">05</span>
+        <span class="sec-title">GDPR &amp; international regulations</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>Because no personal data is collected, processed, or transferred, there is nothing to regulate under GDPR, CCPA, or any other privacy law. You retain full control of any data stored locally on your device.</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">06</span>
+        <span class="sec-title">Limitation of liability</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>The app is provided "as is" without warranties of any kind. The developer is not liable for any damages arising from its use. This policy is governed by the laws of the Republic of Latvia.</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">07</span>
+        <span class="sec-title">Changes to this policy</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>If this policy ever changes in a material way, the date at the top of this page will be updated. Given the app is fully offline with no data collection, significant changes are unlikely.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="contact">
+    <div class="contact-inner">
+      <div class="contact-left">
+        <h3>Have a question?</h3>
+        <p>I actually read my emails.</p>
+      </div>
+      <a class="contact-btn" href="mailto:urbanovich.urbanovich@gmail.com">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M1 5l7 5 7-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        urbanovich.urbanovich@gmail.com
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════ RU ════════════════════════════════ -->
+<div class="content" id="content-ru">
+
+  <div class="statement">
+    <div class="statement-inner">
+      <p>Я сделал это приложение один, как личный проект. Это игра в шашки — без аккаунтов, без облака, без сервера. Эта страница существует, потому что её требует Apple. <strong>Вся политика умещается в одно предложение:</strong></p>
+      <p><em>Приложение не собирает, не хранит и не передаёт никакие персональные данные.</em></p>
+      <p>Всё ниже — просто юридическое расширение этого предложения.</p>
+    </div>
+  </div>
+
+  <div class="badge-row">
+    <div class="badge">
+      <div class="badge-icon">📵</div>
+      <div class="badge-label">Без интернета</div>
+    </div>
+    <div class="badge">
+      <div class="badge-icon">🚫</div>
+      <div class="badge-label">Ноль данных</div>
+    </div>
+    <div class="badge">
+      <div class="badge-icon">🔒</div>
+      <div class="badge-label">Только локально</div>
+    </div>
+  </div>
+
+  <div class="sections">
+
+    <div class="sec open">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">01</span>
+        <span class="sec-title">Что хранит приложение</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>Приложение сохраняет две вещи в локальное хранилище устройства: настройки (тема доски, стиль шашек, звук, язык) и игровую статистику (победы, поражения, число партий). Эти данные никуда не отправляются.</p>
+        <p>Удалить их можно в любой момент, удалив приложение. Статистику также можно сбросить внутри: Настройки → Статистика → Сбросить.</p>
+        <span class="pill">Только на устройстве · Никогда не передаётся</span>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">02</span>
+        <span class="sec-title">Нет трекинга и аналитики</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>В приложении нет аналитики, сборщиков ошибок, рекламных сетей и сторонних SDK. У меня нет никакой информации о том, как используется приложение, как долго длятся сессии и кто в него играет.</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">03</span>
+        <span class="sec-title">Без аккаунта и облака</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>Нет регистрации, нет входа, нет профиля, нет синхронизации. Никакой информации о тебе не существует нигде за пределами твоего устройства.</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">04</span>
+        <span class="sec-title">Безопасность детей (COPPA)</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>Приложение имеет рейтинг 4+ и безопасно для пользователей любого возраста. Поскольку данные не собираются ни от кого, оно по умолчанию соответствует COPPA и аналогичному законодательству.</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">05</span>
+        <span class="sec-title">GDPR и международное законодательство</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>Поскольку никакие персональные данные не собираются, не обрабатываются и не передаются, регулировать нечего — ни по GDPR, ни по CCPA, ни по любому другому закону. Всё под твоим полным контролем.</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">06</span>
+        <span class="sec-title">Ограничение ответственности</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>Приложение предоставляется «как есть», без каких-либо гарантий. Разработчик не несёт ответственности за любой ущерб от его использования. Настоящая политика регулируется законодательством Республики Латвия.</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">07</span>
+        <span class="sec-title">Изменения политики</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>При существенных изменениях дата вверху страницы будет обновлена. Учитывая, что приложение полностью офлайн и не собирает данных, значительные изменения маловероятны.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="contact">
+    <div class="contact-inner">
+      <div class="contact-left">
+        <h3>Есть вопросы?</h3>
+        <p>Я читаю свою почту.</p>
+      </div>
+      <a class="contact-btn" href="mailto:urbanovich.urbanovich@gmail.com">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M1 5l7 5 7-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        urbanovich.urbanovich@gmail.com
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════ ES ════════════════════════════════ -->
+<div class="content" id="content-es">
+
+  <div class="statement">
+    <div class="statement-inner">
+      <p>Hice esta app yo solo, como proyecto personal. Es un juego de damas — sin cuentas, sin nube, sin servidor. Esta página existe porque Apple la requiere. <strong>Toda la política cabe en una frase:</strong></p>
+      <p><em>Esta app no recopila, almacena ni transmite ningún dato personal.</em></p>
+      <p>Todo lo siguiente es la versión legal ampliada de esa frase.</p>
+    </div>
+  </div>
+
+  <div class="badge-row">
+    <div class="badge">
+      <div class="badge-icon">📵</div>
+      <div class="badge-label">Sin Internet</div>
+    </div>
+    <div class="badge">
+      <div class="badge-icon">🚫</div>
+      <div class="badge-label">Cero Datos</div>
+    </div>
+    <div class="badge">
+      <div class="badge-icon">🔒</div>
+      <div class="badge-label">Solo Local</div>
+    </div>
+  </div>
+
+  <div class="sections">
+
+    <div class="sec open">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">01</span>
+        <span class="sec-title">Qué almacena la app</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>La app guarda dos cosas en el almacenamiento local de tu dispositivo: tus preferencias (tema del tablero, estilo de piezas, sonido, idioma) y tus estadísticas de juego (victorias, derrotas, partidas totales). Nunca salen de tu dispositivo.</p>
+        <p>Puedes eliminar estos datos desinstalando la app, o reiniciar las estadísticas desde Ajustes → Estadísticas → Reiniciar.</p>
+        <span class="pill">Solo local · Nunca transmitido</span>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">02</span>
+        <span class="sec-title">Sin rastreo ni analíticas</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>No hay herramientas de analíticas, informes de errores, redes publicitarias ni SDKs de terceros en esta app. No tengo visibilidad sobre cómo se usa ni sobre las personas que juegan.</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">03</span>
+        <span class="sec-title">Sin cuenta ni nube</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>No hay registro, inicio de sesión, perfil de usuario ni sincronización en la nube. No existe ningún dato tuyo fuera de tu propio dispositivo.</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">04</span>
+        <span class="sec-title">Privacidad infantil (COPPA)</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>La app tiene clasificación 4+ y es segura para usuarios de todas las edades. Al no recopilar datos de nadie, cumple por diseño con COPPA y normativas similares.</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">05</span>
+        <span class="sec-title">GDPR y regulaciones internacionales</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>Al no recopilarse, procesarse ni transferirse datos personales, no hay nada que regular bajo el RGPD, la CCPA ni ninguna otra ley de privacidad. Tienes control total sobre los datos almacenados localmente.</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">06</span>
+        <span class="sec-title">Limitación de responsabilidad</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>La app se proporciona "tal cual", sin garantías de ningún tipo. El desarrollador no es responsable de ningún daño derivado de su uso. Esta política se rige por las leyes de la República de Letonia.</p>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head" onclick="toggle(this)">
+        <span class="sec-num">07</span>
+        <span class="sec-title">Cambios en esta política</span>
+        <span class="sec-arrow">›</span>
+      </div>
+      <div class="sec-body">
+        <p>Si esta política cambia de forma sustancial, se actualizará la fecha en la parte superior. Dado que la app es completamente offline sin recopilación de datos, los cambios importantes son poco probables.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="contact">
+    <div class="contact-inner">
+      <div class="contact-left">
+        <h3>¿Tienes preguntas?</h3>
+        <p>Sí leo mis correos.</p>
+      </div>
+      <a class="contact-btn" href="mailto:urbanovich.urbanovich@gmail.com">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M1 5l7 5 7-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        urbanovich.urbanovich@gmail.com
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════ FOOTER ════════════════════════════ -->
+<footer>
+  <p>© 2026 Checkers: Emerald Courts</p>
+  <a href="https://github.com/qa-urbanovics/checkers">GitHub</a>
+</footer>
+
+<script>
+  function setLang(lang, btn) {
+    document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.lang-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('content-' + lang).classList.add('active');
+    btn.classList.add('active');
+  }
+  function toggle(head) {
+    head.closest('.sec').classList.toggle('open');
+  }
+</script>
 
 </body>
 </html>
