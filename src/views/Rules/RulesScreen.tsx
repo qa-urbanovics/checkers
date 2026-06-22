@@ -23,9 +23,9 @@ const SECTIONS: Section[] = [
   },
   {
     icon: '×',
-    en: { title: 'Capturing', body: 'Jump over an opponent\'s piece to an empty square behind it. Capturing is mandatory — if you can take, you must.' },
-    ru: { title: 'Взятие', body: 'Перепрыгни через шашку соперника на пустую клетку позади неё. Взятие обязательно — если можешь бить, обязан.' },
-    es: { title: 'Captura', body: 'Salta sobre una pieza rival a la casilla vacía detrás. La captura es obligatoria — si puedes tomar, debes hacerlo.' },
+    en: { title: 'Capturing', body: 'Jump over an opponent\'s piece to an empty square behind it. Men can capture in any direction — including backward. Capturing is mandatory.' },
+    ru: { title: 'Взятие', body: 'Перепрыгни через шашку соперника на пустую клетку за ней. Шашка может бить в любом направлении — в том числе назад. Взятие обязательно.' },
+    es: { title: 'Captura', body: 'Salta sobre una pieza rival a la casilla vacía detrás. Las piezas pueden capturar en cualquier dirección, incluso hacia atrás. La captura es obligatoria.' },
   },
   {
     icon: '⛓',
@@ -35,9 +35,9 @@ const SECTIONS: Section[] = [
   },
   {
     icon: '♛',
-    en: { title: 'Becoming a King', body: 'When a man reaches the last row, it becomes a King and stops there. Kings can move any number of squares diagonally in any direction (flying king).' },
-    ru: { title: 'Дамка', body: 'Когда шашка достигает последнего ряда, она становится дамкой и останавливается. Дамка ходит на любое расстояние по диагонали в любом направлении.' },
-    es: { title: 'Dama', body: 'Cuando una pieza llega a la última fila, se convierte en Dama y se detiene. Las Damas se mueven cualquier número de casillas en diagonal en cualquier dirección.' },
+    en: { title: 'King (Flying King)', body: 'When a man reaches the last row, it becomes a King. Kings move any number of squares diagonally in any direction — like a bishop in chess. If a man is promoted during a capture chain, the chain stops at that square.' },
+    ru: { title: 'Дамка (летунья)', body: 'Когда шашка достигает последнего ряда, она становится дамкой. Дамка ходит на любое расстояние по диагонали в любом направлении — как слон в шахматах. Если шашка превращается в дамку в процессе серии взятий — серия на этом прерывается.' },
+    es: { title: 'Dama (voladora)', body: 'Cuando una pieza llega a la última fila, se convierte en Dama. Las Damas se mueven cualquier número de casillas en diagonal en cualquier dirección — como el alfil en ajedrez. Si una pieza se corona durante una cadena de capturas, la cadena se detiene.' },
   },
 ];
 
@@ -63,13 +63,13 @@ const DIFF_ROWS: Array<{
   },
   {
     en: ['On promotion', 'Chain stops', 'Chain stops'],
-    ru: ['При взятии дамки', 'Серия прерывается', 'Серия прерывается'],
+    ru: ['Превращение в дамку', 'Серия прерывается', 'Серия прерывается'],
     es: ['Al coronar', 'La cadena se detiene', 'La cadena se detiene'],
   },
   {
-    en: ['Flying king', 'Yes', 'Yes'],
-    ru: ['Дамка-летунья', 'Да', 'Да'],
-    es: ['Dama voladora', 'Sí', 'Sí'],
+    en: ['King movement', 'Any distance', 'Any distance'],
+    ru: ['Ход дамки', 'Любое расстояние', 'Любое расстояние'],
+    es: ['Movimiento dama', 'Cualquier distancia', 'Cualquier distancia'],
   },
 ];
 
