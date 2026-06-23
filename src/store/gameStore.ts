@@ -10,6 +10,7 @@ import {
 import { createEmptyBoard, setupInitialPieces } from '../engine/boardFactory';
 import { getAllValidMoves, getValidMovesForPiece, shouldPromote } from '../engine/moveValidator';
 import { getBestMove } from '../engine/aiEngine';
+import { playMove, playCapture, playPromotion, playWin, playDraw } from '../engine/soundEngine';
 
 // ============================================================
 // GAME STORE (Zustand)
@@ -252,6 +253,19 @@ export const useGameStore = create<GameStore>()(
           }
           if (game.gameMode === 'pvp' && winner) {
             newStats = { ...newStats, winsPvp: newStats.winsPvp + 1 };
+          }
+        }
+
+        // Sound feedback
+        if (get().settings.soundEnabled) {
+          if (status === 'finished') {
+            winner ? playWin() : playDraw();
+          } else if (promoted) {
+            playPromotion();
+          } else if (move.captures.length > 0) {
+            playCapture();
+          } else {
+            playMove();
           }
         }
 
