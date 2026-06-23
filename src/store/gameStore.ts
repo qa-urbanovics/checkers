@@ -37,6 +37,9 @@ interface GameStore {
   undoMove: () => void;
   resetGame: () => void;
   declareDraw: () => void;
+  offerDraw: () => void;
+  acceptDraw: () => void;
+  declineDraw: () => void;
 
   // Settings
   settings: AppSettings;
@@ -103,6 +106,7 @@ function createInitialGameState(
     turnCount: 0,
     stateHistory: [],
     positionCounts: {},
+    drawOffer: false,
   };
 }
 
@@ -327,13 +331,48 @@ export const useGameStore = create<GameStore>()(
         }
       },
 
+      // Legacy direct draw (used internally for repetition)
       declareDraw: () => {
         const { game, stats } = get();
         if (game.status !== 'playing') return;
         set({
           stats: { ...stats, totalGames: stats.totalGames + 1, draws: stats.draws + 1 },
-          game: { ...game, status: 'finished', winner: null },
+          game: { ...game, status: 'finished', winner: null, drawOffer: false },
         });
+      },
+
+      // Player presses ½ — offer a draw
+      offerDraw: () => {
+        const { game } = get();
+        if (game.status !== 'playing' || game.drawOffer) return;
+
+        if (game.gameMode === 'pvp') {
+          // Show confirmation dialog for the other player
+          set({ game: { ...game, drawOffer: true } });
+        } else {
+          // AI decides based on position: accepts if not winning by more than 2 pieces
+          const aiIsWinning = game.blackPiecesCount > game.redPiecesCount + 2;
+          if (aiIsWinning) {
+            // Show "AI declined" briefly via drawOffer state, then auto-dismiss
+            set({ game: { ...game, drawOffer: true } });
+            setTimeout(() => {
+              const s = get().game;
+              if (s.drawOffer) set({ game: { ...s, drawOffer: false } });
+            }, 2000);
+          } else {
+            // AI accepts — end as draw
+            get().declareDraw();
+          }
+        }
+      },
+
+      acceptDraw: () => {
+        get().declareDraw();
+      },
+
+      declineDraw: () => {
+        const { game } = get();
+        set({ game: { ...game, drawOffer: false } });
       },
 
       undoMove: () => {

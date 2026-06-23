@@ -2,8 +2,8 @@ import { useGameStore } from '../../store/gameStore';
 import { useT } from '../../i18n';
 
 export function GameHUD() {
-  const { game, setScreen, resetGame, undoMove, declareDraw, settings } = useGameStore();
-  const { currentTurn, status, winner, gameMode, aiDifficulty, redPiecesCount, blackPiecesCount, boardSize } = game;
+  const { game, setScreen, resetGame, undoMove, offerDraw, acceptDraw, declineDraw, settings } = useGameStore();
+  const { currentTurn, status, winner, gameMode, aiDifficulty, redPiecesCount, blackPiecesCount, boardSize, drawOffer } = game;
   const t = useT();
 
   const isAI = gameMode === 'ai';
@@ -60,7 +60,7 @@ export function GameHUD() {
           </button>
           {status === 'playing' && (
             <button
-              onClick={declareDraw}
+              onClick={offerDraw}
               style={navBtnStyle('#6A9A74', 'rgba(255,255,255,0.04)', 'rgba(106,154,116,0.25)')}
               title={t('offerDraw')}
             >
@@ -127,6 +127,51 @@ export function GameHUD() {
           }} />
         </div>
       </div>
+
+      {drawOffer && status === 'playing' && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 100,
+          background: 'rgba(0,0,0,0.75)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '0 28px', backdropFilter: 'blur(8px)',
+          animation: 'fadeUp 0.2s ease-out',
+        }}>
+          <div style={{
+            background: 'linear-gradient(145deg, #0A150B 0%, #0F1F12 50%, #0A150B 100%)',
+            border: '1px solid rgba(94,204,134,0.2)', borderRadius: 28,
+            padding: '32px 28px', textAlign: 'center', width: '100%', maxWidth: 320,
+            boxShadow: '0 30px 80px rgba(0,0,0,0.9)',
+            animation: 'modalIn 0.3s cubic-bezier(0.175,0.885,0.32,1.2)',
+          }}>
+            <div style={{ fontSize: 48, marginBottom: 12, lineHeight: 1 }}>🤝</div>
+            <h2 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 8px', color: '#C0D8C4' }}>
+              {isAI
+                ? t('aiDeclinedDraw')
+                : (currentTurn === 'red'
+                    ? (isClassic ? t('drawOfferedToBlack') : t('drawOfferedToGreen'))
+                    : (isClassic ? t('drawOfferedToWhite') : t('drawOfferedToRed')))}
+            </h2>
+            <p style={{ fontSize: 13, color: '#3A5A40', margin: '0 0 24px', fontWeight: 500 }}>
+              {isAI ? t('aiDeclinedDrawSub') : t('drawOfferSub')}
+            </p>
+            {!isAI && (
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button className="btn-outline" style={{ flex: 1 }} onClick={declineDraw}>
+                  {t('decline')}
+                </button>
+                <button className="btn-gold" style={{ flex: 1 }} onClick={acceptDraw}>
+                  {t('accept')}
+                </button>
+              </div>
+            )}
+            {isAI && (
+              <button className="btn-outline" style={{ width: '100%' }} onClick={declineDraw}>
+                {t('ok')}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {status === 'finished' && (
         <div style={{

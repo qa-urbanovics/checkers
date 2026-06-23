@@ -74,6 +74,7 @@ export interface GameState {
   turnCount: number;
   stateHistory: GameSnapshot[];
   positionCounts: Record<string, number>;
+  drawOffer: boolean; // draw has been offered and is awaiting response
 }
 
 // Player stats (persisted)
