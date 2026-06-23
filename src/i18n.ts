@@ -80,6 +80,8 @@ const T = {
     undo: 'Undo',
     rules: 'Rules',
     rulesTitle: 'How to Play',
+    offerDraw: 'Draw',
+    drawByRepetition: 'Draw by repetition',
   },
   ru: {
     back: '← Назад',
@@ -160,6 +162,8 @@ const T = {
     undo: 'Отмена',
     rules: 'Правила',
     rulesTitle: 'Как играть',
+    offerDraw: 'Ничья',
+    drawByRepetition: 'Ничья повторением',
   },
   es: {
     back: '← Atrás',
@@ -240,6 +244,8 @@ const T = {
     undo: 'Deshacer',
     rules: 'Reglas',
     rulesTitle: 'Cómo jugar',
+    offerDraw: 'Empate',
+    drawByRepetition: 'Empate por repetición',
   },
 } as const;
 

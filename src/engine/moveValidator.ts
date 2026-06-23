@@ -160,10 +160,7 @@ function getCaptureMovesForPiece(
   const singles = getSingleCaptures(piece, board, size, capturedIds);
   if (singles.length === 0) return [];
 
-  // Russian rules: any capture is valid — no majority filtering needed
-  if (rules === 'russian') return singles;
-
-  // International: only return moves that are part of a max-capture sequence
+  // Both rule sets: only return moves that are part of a max-capture sequence
   const req = required ?? maxCaptureCount(piece, board, size, capturedIds, rules);
   if (req === 0) return singles;
 
@@ -189,7 +186,7 @@ function getCaptureMovesForPiece(
 }
 
 // All valid moves for a color. Captures are mandatory.
-// For international: applies majority capture (must take the most pieces possible).
+// Both Russian and International: majority capture — must take the most pieces possible.
 export function getAllValidMoves(
   color: PlayerColor,
   board: Cell[][],
@@ -213,14 +210,8 @@ export function getAllValidMoves(
     return moves;
   }
 
-  if (rules === 'russian') {
-    // Russian: any capture is mandatory, no majority requirement
-    const moves: Move[] = [];
-    for (const p of pieces) moves.push(...getSingleCaptures(p, board, size, new Set()));
-    return moves;
-  }
-
-  // International: majority capture — must take the maximum possible pieces
+  // Majority capture: must take the maximum possible pieces in any single sequence.
+  // Applies to both Russian (8×8) and International (10×10) rules.
   const maxPerPiece = pieces.map(p => maxCaptureCount(p, board, size, new Set(), rules));
   const globalMax = Math.max(...maxPerPiece);
 

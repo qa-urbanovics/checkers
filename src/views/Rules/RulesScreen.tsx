@@ -57,9 +57,9 @@ const DIFF_ROWS: Array<{
     es: ['Piezas', '12 cada uno', '20 cada uno'],
   },
   {
-    en: ['Capture rule', 'Any capture valid', 'Must capture most'],
-    ru: ['Взятие', 'Любое взятие', 'Бить максимум'],
-    es: ['Captura', 'Cualquier captura', 'Capturar el máximo'],
+    en: ['Capture rule', 'Must capture most', 'Must capture most'],
+    ru: ['Взятие', 'Бить максимум', 'Бить максимум'],
+    es: ['Captura', 'Capturar el máximo', 'Capturar el máximo'],
   },
   {
     en: ['On promotion', 'Chain continues as king', 'Chain continues as king'],

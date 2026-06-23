@@ -73,6 +73,7 @@ export interface GameState {
   blackPiecesCount: number;
   turnCount: number;
   stateHistory: GameSnapshot[];
+  positionCounts: Record<string, number>;
 }
 
 // Player stats (persisted)

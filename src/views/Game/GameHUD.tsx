@@ -2,7 +2,7 @@ import { useGameStore } from '../../store/gameStore';
 import { useT } from '../../i18n';
 
 export function GameHUD() {
-  const { game, setScreen, resetGame, undoMove, settings } = useGameStore();
+  const { game, setScreen, resetGame, undoMove, declareDraw, settings } = useGameStore();
   const { currentTurn, status, winner, gameMode, aiDifficulty, redPiecesCount, blackPiecesCount, boardSize } = game;
   const t = useT();
 
@@ -26,7 +26,7 @@ export function GameHUD() {
   };
 
   const statusColor = status === 'finished'
-    ? (winner === 'red' ? '#C9A84C' : '#E05A5A')
+    ? (winner === 'red' ? '#C9A84C' : winner === 'black' ? '#E05A5A' : '#6A9A74')
     : currentTurn === 'red' ? '#E05A5A' : '#90B8A0';
 
   const p1Bg = isClassic ? '#EEEAE4' : '#C83232';
@@ -58,6 +58,15 @@ export function GameHUD() {
           >
             ↩
           </button>
+          {status === 'playing' && (
+            <button
+              onClick={declareDraw}
+              style={navBtnStyle('#6A9A74', 'rgba(255,255,255,0.04)', 'rgba(106,154,116,0.25)')}
+              title={t('offerDraw')}
+            >
+              ½
+            </button>
+          )}
           <button onClick={resetGame} style={navBtnStyle('#6A8A70', 'rgba(255,255,255,0.05)', 'rgba(255,255,255,0.09)')}>
             ↺
           </button>

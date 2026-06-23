@@ -5,7 +5,7 @@ import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 import { detectLanguage } from '../i18n';
 import {
   GameState, GameMode, AIDifficulty, BoardSize, PlayerColor,
-  Piece, Move, Screen, AppSettings, PlayerStats, GameStatus, GameSnapshot
+  Cell, Piece, Move, Screen, AppSettings, PlayerStats, GameStatus, GameSnapshot
 } from '../models/types';
 import { createEmptyBoard, setupInitialPieces } from '../engine/boardFactory';
 import { getAllValidMoves, getValidMovesForPiece, shouldPromote } from '../engine/moveValidator';
@@ -35,6 +35,7 @@ interface GameStore {
   makeMove: (move: Move) => void;
   undoMove: () => void;
   resetGame: () => void;
+  declareDraw: () => void;
 
   // Settings
   settings: AppSettings;
@@ -63,6 +64,17 @@ const DEFAULT_STATS: PlayerStats = {
   winsPvp: 0,
 };
 
+// Compact board hash for threefold-repetition detection.
+function getBoardHash(board: Cell[][], turn: PlayerColor): string {
+  let h = turn[0];
+  for (let r = 0; r < board.length; r++)
+    for (let c = 0; c < board[r].length; c++) {
+      const p = board[r][c].piece;
+      if (p) h += r + '' + c + p.color[0] + p.type[0];
+    }
+  return h;
+}
+
 function createInitialGameState(
   mode: GameMode,
   boardSize: BoardSize,
@@ -89,6 +101,7 @@ function createInitialGameState(
     blackPiecesCount: boardSize === 8 ? 12 : 20,
     turnCount: 0,
     stateHistory: [],
+    positionCounts: {},
   };
 }
 
@@ -214,23 +227,31 @@ export const useGameStore = create<GameStore>()(
         else if (blackCount === 0) { winner = 'red'; status = 'finished'; }
         else if (nextMoves.length === 0) { winner = game.currentTurn; status = 'finished'; }
 
+        // Threefold repetition — only track complete turns (not mid-chain)
+        let positionCounts = game.positionCounts;
+        if (status === 'playing' && captureChain === null) {
+          const hash = getBoardHash(newBoard, nextTurn);
+          const count = (positionCounts[hash] ?? 0) + 1;
+          positionCounts = { ...positionCounts, [hash]: count };
+          if (count >= 3) { status = 'finished'; /* winner stays null = draw */ }
+        }
+
         // Update stats
         let newStats = stats;
-        if (status === 'finished' && winner) {
-          newStats = {
-            ...stats,
-            totalGames: stats.totalGames + 1,
-            wins: winner === 'red' ? stats.wins + 1 : stats.wins,
-            losses: winner === 'black' ? stats.losses + 1 : stats.losses,
-          };
-          if (game.gameMode === 'ai' && winner === 'red') {
-            newStats.winsVsAI = {
-              ...newStats.winsVsAI,
-              [game.aiDifficulty]: newStats.winsVsAI[game.aiDifficulty] + 1,
-            };
+        if (status === 'finished') {
+          newStats = { ...stats, totalGames: stats.totalGames + 1 };
+          if (winner === 'red') {
+            newStats = { ...newStats, wins: newStats.wins + 1 };
+            if (game.gameMode === 'ai') {
+              newStats.winsVsAI = { ...newStats.winsVsAI, [game.aiDifficulty]: newStats.winsVsAI[game.aiDifficulty] + 1 };
+            }
+          } else if (winner === 'black') {
+            newStats = { ...newStats, losses: newStats.losses + 1 };
+          } else {
+            newStats = { ...newStats, draws: newStats.draws + 1 };
           }
-          if (game.gameMode === 'pvp') {
-            newStats.winsPvp = newStats.winsPvp + 1;
+          if (game.gameMode === 'pvp' && winner) {
+            newStats = { ...newStats, winsPvp: newStats.winsPvp + 1 };
           }
         }
 
@@ -264,6 +285,7 @@ export const useGameStore = create<GameStore>()(
             blackPiecesCount: blackCount,
             turnCount: game.turnCount + 1,
             stateHistory,
+            positionCounts,
           }
         });
 
@@ -276,6 +298,9 @@ export const useGameStore = create<GameStore>()(
         ) {
           setTimeout(() => {
             const state = get().game;
+            // Guard: only act when it's genuinely black's turn (prevents stale timers
+            // from firing during the player's chain or after a fast undo).
+            if (state.status !== 'playing' || state.currentTurn !== 'black') return;
             if (state.captureChain) {
               // Continue the mandatory capture chain
               const chainMove = state.validMoves[0];
@@ -286,6 +311,15 @@ export const useGameStore = create<GameStore>()(
             }
           }, 400);
         }
+      },
+
+      declareDraw: () => {
+        const { game, stats } = get();
+        if (game.status !== 'playing') return;
+        set({
+          stats: { ...stats, totalGames: stats.totalGames + 1, draws: stats.draws + 1 },
+          game: { ...game, status: 'finished', winner: null },
+        });
       },
 
       undoMove: () => {
