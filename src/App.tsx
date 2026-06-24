@@ -78,24 +78,15 @@ function App() {
     );
   }
 
-  // ── TABLET (iPad) — full screen, content centred per-screen ──
+  // ── TABLET (iPad) — full screen, each screen handles its own layout ──
   if (DEVICE === 'tablet') {
-    const isGame = screen === 'game';
-    const contentW = isGame ? '100%' : Math.min(680, window.innerWidth);
     return (
       <div style={{
         width: '100%', height: '100dvh',
         background: '#050B06',
         overflow: 'hidden', position: 'relative',
       }}>
-        <div style={{
-          width: contentW,
-          height: '100%',
-          margin: '0 auto',
-          position: 'relative',
-        }}>
-          {renderScreen()}
-        </div>
+        {renderScreen()}
       </div>
     );
   }

@@ -25,6 +25,7 @@ function Toggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
 export function SettingsScreen() {
   const { setScreen, settings, updateSettings } = useGameStore();
   const t = useT();
+  const isTablet = window.innerWidth > 600;
 
   const boardThemes = [
     { value: 'emerald', label: t('emeraldBoard'), dark: '#1A3D1C', light: '#E8D5A3' },
@@ -36,28 +37,41 @@ export function SettingsScreen() {
     <div style={{
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
-      borderRadius: 16, padding: '15px 16px',
+      borderRadius: isTablet ? 20 : 16, padding: isTablet ? '20px 22px' : '15px 16px',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span style={{ fontSize: 20 }}>{icon}</span>
-        <span style={{ fontSize: 15, color: '#C0D8C4', fontWeight: 500 }}>{label}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: isTablet ? 16 : 12 }}>
+        <span style={{ fontSize: isTablet ? 26 : 20 }}>{icon}</span>
+        <span style={{ fontSize: isTablet ? 18 : 15, color: '#C0D8C4', fontWeight: 500 }}>{label}</span>
       </div>
       {children}
     </div>
   );
+
+  const maxW = isTablet ? 640 : undefined;
 
   return (
     <div className="screen-enter" style={{
       height: '100%', width: '100%',
       background: 'radial-gradient(ellipse at 30% 20%, rgba(26,61,28,0.5) 0%, #050B06 65%)',
       display: 'flex', flexDirection: 'column',
-      padding: '20px 24px', overflow: 'hidden',
+      padding: isTablet ? '32px 48px' : '20px 24px', overflow: 'hidden',
+      alignItems: isTablet ? 'center' : undefined,
     }}>
-      <button onClick={() => setScreen('home')} style={backBtnStyle}>{t('back')}</button>
+      <div style={{ width: '100%', maxWidth: isTablet ? maxW : undefined, display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+      <button onClick={() => setScreen('home')} style={{
+        alignSelf: 'flex-start', background: 'none', border: 'none',
+        color: '#3A7A50', fontSize: isTablet ? 17 : 14, cursor: 'pointer', padding: '4px 0',
+        marginBottom: isTablet ? 32 : 28, fontWeight: 600,
+      }}>{t('back')}</button>
 
-      <h2 style={{ ...headingStyle, animation: 'fadeUp 0.4s ease-out' }}>{t('settingsTitle')}</h2>
+      <h2 style={{
+        fontSize: isTablet ? 44 : 30, fontWeight: 800, margin: isTablet ? '0 0 32px' : '0 0 24px',
+        background: 'linear-gradient(135deg, #FFFFFF 0%, #B8D4BC 60%, #5ECC86 100%)',
+        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+        animation: 'fadeUp 0.4s ease-out',
+      }}>{t('settingsTitle')}</h2>
 
-      <div className="scroll" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10, animation: 'fadeUp 0.4s ease-out 0.06s both' }}>
+      <div className="scroll" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: isTablet ? 14 : 10, animation: 'fadeUp 0.4s ease-out 0.06s both' }}>
         <Row icon="🔊" label={t('sound')}>
           <Toggle on={settings.soundEnabled} onToggle={() => updateSettings({ soundEnabled: !settings.soundEnabled })} />
         </Row>
@@ -133,21 +147,11 @@ export function SettingsScreen() {
           </div>
         </div>
       </div>
+      </div>
     </div>
   );
 }
 
-const backBtnStyle: React.CSSProperties = {
-  alignSelf: 'flex-start', background: 'none', border: 'none',
-  color: '#3A7A50', fontSize: 14, cursor: 'pointer', padding: '4px 0',
-  marginBottom: 28, fontWeight: 600,
-};
-
-const headingStyle: React.CSSProperties = {
-  fontSize: 30, fontWeight: 800, margin: '0 0 24px',
-  background: 'linear-gradient(135deg, #FFFFFF 0%, #B8D4BC 60%, #5ECC86 100%)',
-  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-};
 
 const sectionCardStyle: React.CSSProperties = {
   background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',

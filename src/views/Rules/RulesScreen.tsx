@@ -77,6 +77,9 @@ export function RulesScreen() {
   const setScreen = useGameStore(s => s.setScreen);
   const lang = useGameStore(s => s.settings.language) as 'en' | 'ru' | 'es';
   const t = useT();
+  const isTablet = window.innerWidth > 600;
+
+  const maxW = isTablet ? 680 : undefined;
 
   return (
     <div className="screen-enter" style={{
@@ -88,7 +91,7 @@ export function RulesScreen() {
       {/* Header */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '14px 18px 10px',
+        padding: isTablet ? '20px 48px 16px' : '14px 18px 10px',
         borderBottom: '1px solid rgba(255,255,255,0.05)',
         flexShrink: 0,
       }}>
@@ -96,47 +99,48 @@ export function RulesScreen() {
           onClick={() => setScreen('home')}
           style={{
             background: 'none', border: 'none', color: '#5ECC86',
-            fontSize: 14, fontWeight: 600, cursor: 'pointer', padding: '4px 0',
+            fontSize: isTablet ? 17 : 14, fontWeight: 600, cursor: 'pointer', padding: '4px 0',
           }}
         >
           {t('back')}
         </button>
         <span style={{
-          fontSize: 16, fontWeight: 700, color: '#C0D8C4',
+          fontSize: isTablet ? 22 : 16, fontWeight: 700, color: '#C0D8C4',
           letterSpacing: '0.03em',
         }}>
           {t('rulesTitle')}
         </span>
-        <div style={{ width: 56 }} />
+        <div style={{ width: isTablet ? 80 : 56 }} />
       </div>
 
       {/* Scrollable content */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 18px 32px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: isTablet ? '28px 48px 48px' : '16px 18px 32px' }}>
+        <div style={{ maxWidth: maxW, margin: '0 auto' }}>
 
         {/* Main rules sections */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 28 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: isTablet ? 14 : 10, marginBottom: isTablet ? 40 : 28 }}>
           {SECTIONS.map((s, i) => (
             <div key={i} style={{
               background: 'rgba(255,255,255,0.03)',
               border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: 14, padding: '13px 15px',
-              display: 'flex', gap: 13, alignItems: 'flex-start',
+              borderRadius: isTablet ? 18 : 14, padding: isTablet ? '18px 20px' : '13px 15px',
+              display: 'flex', gap: isTablet ? 18 : 13, alignItems: 'flex-start',
             }}>
               <div style={{
-                width: 32, height: 32, borderRadius: '50%',
+                width: isTablet ? 44 : 32, height: isTablet ? 44 : 32, borderRadius: '50%',
                 background: 'rgba(94,204,134,0.1)',
                 border: '1px solid rgba(94,204,134,0.2)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 14, color: '#5ECC86',
+                fontSize: isTablet ? 18 : 14, color: '#5ECC86',
                 flexShrink: 0, fontWeight: 700,
               }}>
                 {s.icon}
               </div>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#C0D8C4', marginBottom: 4 }}>
+                <div style={{ fontSize: isTablet ? 17 : 13, fontWeight: 700, color: '#C0D8C4', marginBottom: isTablet ? 6 : 4 }}>
                   {s[lang].title}
                 </div>
-                <div style={{ fontSize: 12, color: '#5A7A60', lineHeight: 1.5 }}>
+                <div style={{ fontSize: isTablet ? 15 : 12, color: '#5A7A60', lineHeight: 1.6 }}>
                   {s[lang].body}
                 </div>
               </div>
@@ -184,6 +188,7 @@ export function RulesScreen() {
           ))}
         </div>
 
+        </div>{/* maxWidth wrapper */}
       </div>
     </div>
   );

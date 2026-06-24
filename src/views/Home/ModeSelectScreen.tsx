@@ -30,68 +30,71 @@ function AiIcon() {
 export function ModeSelectScreen() {
   const { setScreen, setPendingMode } = useGameStore();
   const t = useT();
+  const isTablet = window.innerWidth > 600;
 
   const modes: { value: GameMode; title: string; sub: string; icon: JSX.Element; accent: string }[] = [
     { value: 'pvp', title: t('pvpTitle'), sub: t('pvpSub'), icon: <PvpIcon />, accent: '94,204,134' },
     { value: 'ai',  title: t('aiTitle'),  sub: t('aiSub'),  icon: <AiIcon />,  accent: '201,168,76' },
   ];
 
+  const maxW = isTablet ? 620 : undefined;
+  const outerPad = isTablet ? '0 48px' : '20px 24px';
+
   return (
     <div className="screen-enter" style={{
       height: '100%', width: '100%',
       background: 'radial-gradient(ellipse at 30% 20%, rgba(26,61,28,0.5) 0%, #050B06 65%)',
       display: 'flex', flexDirection: 'column',
-      padding: '20px 24px',
+      justifyContent: isTablet ? 'center' : 'flex-start',
+      padding: outerPad,
     }}>
-      <button onClick={() => setScreen('home')} style={backBtnStyle}>{t('back')}</button>
+      {/* centred content column */}
+      <div style={{ width: '100%', maxWidth: maxW, margin: '0 auto' }}>
+        <button onClick={() => setScreen('home')} style={{
+          display: 'block', background: 'none', border: 'none',
+          color: '#3A7A50', fontSize: isTablet ? 17 : 14, cursor: 'pointer', padding: '4px 0',
+          marginBottom: isTablet ? 40 : 32, fontWeight: 600,
+        }}>{t('back')}</button>
 
-      <div style={{ marginBottom: 32, animation: 'fadeUp 0.4s ease-out' }}>
-        <h2 style={headingStyle}>{t('gameMode')}</h2>
-        <p style={subStyle}>{t('chooseMode')}</p>
-      </div>
+        <div style={{ marginBottom: isTablet ? 40 : 32, animation: 'fadeUp 0.4s ease-out' }}>
+          <h2 style={{
+            fontSize: isTablet ? 44 : 30, fontWeight: 800, margin: '0 0 8px',
+            background: 'linear-gradient(135deg, #FFFFFF 0%, #B8D4BC 60%, #5ECC86 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          }}>{t('gameMode')}</h2>
+          <p style={{ fontSize: isTablet ? 17 : 14, color: '#3A5A40', margin: 0, fontWeight: 500 }}>{t('chooseMode')}</p>
+        </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 14, animation: 'fadeUp 0.4s ease-out 0.06s both' }}>
-        {modes.map(mode => (
-          <button
-            key={mode.value}
-            className="menu-card"
-            onClick={() => { setPendingMode(mode.value); setScreen('board-select'); }}
-            style={{ textAlign: 'left' }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <div style={{
-                width: 54, height: 54, borderRadius: 16, flexShrink: 0,
-                background: `rgba(${mode.accent},0.08)`,
-                border: `1px solid rgba(${mode.accent},0.2)`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                {mode.icon}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: isTablet ? 20 : 14, animation: 'fadeUp 0.4s ease-out 0.06s both' }}>
+          {modes.map(mode => (
+            <button
+              key={mode.value}
+              className="menu-card"
+              onClick={() => { setPendingMode(mode.value); setScreen('board-select'); }}
+              style={{ textAlign: 'left', padding: isTablet ? '22px 24px' : undefined }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: isTablet ? 24 : 16 }}>
+                <div style={{
+                  width: isTablet ? 68 : 54, height: isTablet ? 68 : 54,
+                  borderRadius: isTablet ? 20 : 16, flexShrink: 0,
+                  background: `rgba(${mode.accent},0.08)`,
+                  border: `1px solid rgba(${mode.accent},0.2)`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <div style={{ transform: isTablet ? 'scale(1.5)' : undefined }}>
+                    {mode.icon}
+                  </div>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: isTablet ? 22 : 18, fontWeight: 700, color: '#E0EDE1', marginBottom: isTablet ? 6 : 4 }}>{mode.title}</div>
+                  <div style={{ fontSize: isTablet ? 16 : 13, color: '#3A5A40', fontWeight: 500 }}>{mode.sub}</div>
+                </div>
+                <div style={{ color: '#2A4A30', fontSize: isTablet ? 28 : 20 }}>›</div>
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 18, fontWeight: 700, color: '#E0EDE1', marginBottom: 4 }}>{mode.title}</div>
-                <div style={{ fontSize: 13, color: '#3A5A40', fontWeight: 500 }}>{mode.sub}</div>
-              </div>
-              <div style={{ color: '#2A4A30', fontSize: 20 }}>›</div>
-            </div>
-          </button>
-        ))}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
-
-const backBtnStyle: React.CSSProperties = {
-  alignSelf: 'flex-start', background: 'none', border: 'none',
-  color: '#3A7A50', fontSize: 14, cursor: 'pointer', padding: '4px 0',
-  marginBottom: 32, fontWeight: 600,
-};
-
-const headingStyle: React.CSSProperties = {
-  fontSize: 30, fontWeight: 800, margin: '0 0 6px',
-  background: 'linear-gradient(135deg, #FFFFFF 0%, #B8D4BC 60%, #5ECC86 100%)',
-  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-};
-
-const subStyle: React.CSSProperties = {
-  fontSize: 14, color: '#3A5A40', margin: 0, fontWeight: 500,
-};
