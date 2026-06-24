@@ -7,12 +7,21 @@ const BOARD_PADDING = 14; // each side
 function getContainerWidth(): number {
   const ua = navigator.userAgent;
   const w = window.innerWidth;
-  // iPad (modern iPads report Macintosh + touch)
+  const h = window.innerHeight;
+
   const isIpad = /iPad/i.test(ua) || (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
-  if (isIpad) return 430;                // matches App.tsx tablet panel width
-  if (w <= 500 || /iPhone|iPod|Android/i.test(ua)) return w; // real phone
-  if (w <= 1400) return 430;             // tablet browser window
-  return 390;                            // desktop iPhone frame
+  const isPhone = /iPhone|iPod|Android/i.test(ua) && !isIpad;
+
+  // Real phone
+  if (isPhone || (w <= 500 && !isIpad)) return w;
+
+  // Desktop frame
+  if (w > 1400 && !isIpad) return 390;
+
+  // iPad or tablet browser (501–1400px) — fill the screen properly
+  const maxByWidth  = Math.floor(w * 0.92);
+  const maxByHeight = Math.floor((h - 200) * 0.95);
+  return Math.min(maxByWidth, maxByHeight, 820);
 }
 
 function calcCellSize(boardSize: number): number {

@@ -38,7 +38,7 @@ function getDeviceType(): 'phone' | 'tablet' | 'desktop' {
   return 'desktop';                  // wide desktop monitors → show iPhone frame
 }
 
-const DEVICE = getDeviceType();
+export const DEVICE = getDeviceType();
 
 function App() {
   const screen = useGameStore(s => s.screen);
@@ -78,40 +78,23 @@ function App() {
     );
   }
 
-  // ── TABLET (iPad) — centered panel, safe insets ────────────
+  // ── TABLET (iPad) — full screen, content centred per-screen ──
   if (DEVICE === 'tablet') {
+    const isGame = screen === 'game';
+    const contentW = isGame ? '100%' : Math.min(680, window.innerWidth);
     return (
       <div style={{
         width: '100%', height: '100dvh',
-        background: 'radial-gradient(ellipse at 50% 30%, rgba(26,61,28,0.6) 0%, #020804 70%)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: '#050B06',
+        overflow: 'hidden', position: 'relative',
       }}>
-        {/* Centered card — sized like a phone, feels native on iPad */}
         <div style={{
-          width: 430,
-          height: Math.min(window.innerHeight - 40, 932),
-          borderRadius: 40,
-          overflow: 'hidden',
-          background: '#050B06',
+          width: contentW,
+          height: '100%',
+          margin: '0 auto',
           position: 'relative',
-          boxShadow: `
-            0 0 0 1px rgba(94,204,134,0.1),
-            0 30px 100px rgba(0,0,0,0.8),
-            0 0 80px rgba(26,61,28,0.3)
-          `,
         }}>
-          {/* Subtle status bar area */}
-          <div style={{
-            position: 'absolute', top: 0, left: 0, right: 0, height: 44, zIndex: 20,
-            background: 'linear-gradient(to bottom, rgba(5,11,6,0.95) 60%, transparent)',
-          }} />
-          <div style={{ position: 'absolute', top: 44, left: 0, right: 0, bottom: 0, overflow: 'hidden' }}>
-            {renderScreen()}
-          </div>
-          {/* Home indicator */}
-          <div style={{ position: 'absolute', bottom: 8, left: 0, right: 0, display: 'flex', justifyContent: 'center', zIndex: 20 }}>
-            <div style={{ width: 130, height: 5, borderRadius: 3, background: 'rgba(255,255,255,0.2)' }} />
-          </div>
+          {renderScreen()}
         </div>
       </div>
     );
