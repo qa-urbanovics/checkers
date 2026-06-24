@@ -38,15 +38,13 @@ export function ModeSelectScreen() {
   ];
 
   const maxW = isTablet ? 620 : undefined;
-  const outerPad = isTablet ? '0 48px' : '20px 24px';
 
   return (
     <div className="screen-enter" style={{
       height: '100%', width: '100%',
       background: 'radial-gradient(ellipse at 30% 20%, rgba(26,61,28,0.5) 0%, #050B06 65%)',
       display: 'flex', flexDirection: 'column',
-      justifyContent: isTablet ? 'center' : 'flex-start',
-      padding: outerPad,
+      padding: isTablet ? '48px 48px' : '20px 24px',
     }}>
       {/* centred content column */}
       <div style={{ width: '100%', maxWidth: maxW, margin: '0 auto' }}>

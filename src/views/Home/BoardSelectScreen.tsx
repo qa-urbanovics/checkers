@@ -46,8 +46,7 @@ export function BoardSelectScreen() {
       height: '100%', width: '100%',
       background: 'radial-gradient(ellipse at 30% 20%, rgba(26,61,28,0.5) 0%, #050B06 65%)',
       display: 'flex', flexDirection: 'column',
-      justifyContent: isTablet ? 'center' : 'flex-start',
-      padding: isTablet ? '0 48px' : '20px 24px',
+      padding: isTablet ? '48px 48px' : '20px 24px',
     }}>
       <div style={{ width: '100%', maxWidth: isTablet ? maxW : undefined, margin: '0 auto' }}>
         <button onClick={() => setScreen('mode-select')} style={{
