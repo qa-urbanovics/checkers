@@ -12,8 +12,8 @@ const ROOT = join(fileURLToPath(import.meta.url), '..', '..');
 const BASE = 'http://localhost:5178';
 
 const DEVICES = [
-  { id: 'iphone67', cssW: 430,  cssH: 932,  scale: 3 },
-  { id: 'ipad129',  cssW: 1024, cssH: 1366, scale: 2 },
+  { id: 'iphone65', cssW: 414,  cssH: 896,  scale: 3 },  // 1242×2688
+  { id: 'ipad129',  cssW: 1024, cssH: 1366, scale: 2 },  // 2048×2732
 ];
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
