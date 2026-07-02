@@ -4,7 +4,7 @@
 <dict>
 	<!-- App identity -->
 	<key>CFBundleDevelopmentRegion</key>
-	<string>ru</string>
+	<string>en</string>
 	<key>CFBundleDisplayName</key>
 	<string>Emerald Checkers</string>
 	<key>CFBundleExecutable</key>
