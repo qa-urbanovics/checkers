@@ -7,7 +7,7 @@ declare const CdvPurchase: any;
 export const TIP_PRODUCTS = [
   { id: 'tip_small',  price: '$0.99' },
   { id: 'tip_medium', price: '$2.99' },
-  { id: 'tip_large',  price: '$4.99' },
+  { id: 'tip_large',  price: '$9.99' },
 ] as const;
 
 export type TipProductId = typeof TIP_PRODUCTS[number]['id'];
