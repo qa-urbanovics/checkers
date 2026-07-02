@@ -16,7 +16,7 @@ export type GameRules = 'russian' | 'international';
 
 export type GameStatus = 'playing' | 'finished';
 
-export type Screen = 'home' | 'mode-select' | 'board-select' | 'difficulty-select' | 'game' | 'settings' | 'stats' | 'rules';
+export type Screen = 'home' | 'mode-select' | 'board-select' | 'difficulty-select' | 'game' | 'settings' | 'stats' | 'rules' | 'tip-jar';
 
 // A piece on the board
 export interface Piece {

@@ -10,7 +10,12 @@ import { GameScreen } from './views/Game/GameScreen';
 import { SettingsScreen } from './views/Settings/SettingsScreen';
 import { StatsScreen } from './views/Stats/StatsScreen';
 import { RulesScreen } from './views/Rules/RulesScreen';
+import { TipJarScreen } from './views/TipJar/TipJarScreen';
+import { initStore } from './services/purchaseService';
 import './App.css';
+
+// Initialize IAP store on app start
+initStore();
 
 // ─────────────────────────────────────────────
 // Device detection
@@ -61,6 +66,7 @@ function App() {
       case 'settings':          return <SettingsScreen />;
       case 'stats':             return <StatsScreen />;
       case 'rules':             return <RulesScreen />;
+      case 'tip-jar':           return <TipJarScreen />;
       default:                  return <HomeScreen />;
     }
   };

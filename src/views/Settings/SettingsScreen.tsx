@@ -146,6 +146,22 @@ export function SettingsScreen() {
             })}
           </div>
         </div>
+
+        <div
+          onClick={() => setScreen('tip-jar')}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: isTablet ? 20 : 16, padding: isTablet ? '20px 22px' : '15px 16px',
+            cursor: 'pointer', transition: 'background 0.15s ease',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: isTablet ? 16 : 12 }}>
+            <span style={{ fontSize: isTablet ? 26 : 20 }}>{'\u2764\uFE0F'}</span>
+            <span style={{ fontSize: isTablet ? 18 : 15, color: '#C0D8C4', fontWeight: 500 }}>{t('supportDev')}</span>
+          </div>
+          <span style={{ fontSize: isTablet ? 18 : 15, color: '#3A5A40' }}>{'\u203A'}</span>
+        </div>
       </div>
       </div>
     </div>
